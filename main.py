@@ -1,6 +1,7 @@
 import sys
 from examples.dnd.dnd import DnD
 from examples.dnd.actions.plan_impotent_rage import PlanImpotentRage
+from examples.dnd.actions.plan_whistle import PlanWhistle
 from examples.dnd.entities.character import Character
 from examples.go_fish.actions.end_turn import EndTurn
 from examples.go_fish.actions.max_value_request import MaxValueRequest
@@ -9,7 +10,7 @@ from examples.go_fish.actions.user_input_request import UserInputRequest
 from examples.go_fish.entities.player import Player
 from examples.go_fish.go_fish import GoFish
 
-def go_fish(): 
+def go_fish():
   game = GoFish()
   player_reactions = [
     [
@@ -43,7 +44,7 @@ def go_fish():
 
       if rank not in hand_by_rank:
         hand_by_rank[rank] = 0
-      
+
       hand_by_rank[rank] += 1
       total += 1
 
@@ -68,7 +69,8 @@ def dnd():
   character_states = [
     {
       'actions': {
-        'rage': PlanImpotentRage
+        'rage': PlanImpotentRage,
+        'whistle': PlanWhistle,
       },
       'charisma': 5,
       'initiative': 0,
@@ -77,7 +79,8 @@ def dnd():
     },
     {
       'actions': {
-        'rage': PlanImpotentRage
+        'rage': PlanImpotentRage,
+        'whistle': PlanWhistle,
       },
       'charisma': 2,
       'initiative': 0,

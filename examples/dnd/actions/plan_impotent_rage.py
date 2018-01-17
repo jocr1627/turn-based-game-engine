@@ -6,8 +6,4 @@ class PlanImpotentRage(CharacterAction):
   name = 'PlanImpotentRage'
 
   def execute(self):
-    planned_actions = self.entity.state['planned_actions']
-    new_planned_actions = [ImpotentRage(self.game, self.entity)]
-    self.entity.state['planned_actions'] = new_planned_actions
-
-    return { self.entity.id: { 'planned_actions': (planned_actions, new_planned_actions) } }
+    return self.entity.state.set('planned_actions', [ImpotentRage(self.game, self.entity)])

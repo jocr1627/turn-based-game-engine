@@ -13,6 +13,6 @@ class DrawHand(Action):
 
   def get_is_valid(self):
     return (
-      len(self.game.state['deck']) > 0
-      and len(self.entity.state['hand']) == 0
+      len(self.game.state.get('deck')) > 0
+      and len(self.entity.state.get('hand')) == 0
     )

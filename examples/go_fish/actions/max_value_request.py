@@ -6,7 +6,7 @@ class MaxValueRequest(Action):
   name = 'MaxValueRequest'
 
   def execute(self):
-    hand = self.entity.state['hand']
+    hand = self.entity.state.get('hand')
     hand_by_rank = {}
 
     for card in hand:
@@ -28,13 +28,13 @@ class MaxValueRequest(Action):
 
   def get_is_valid(self):
     return (
-      self.entity is self.game.state['active_player']
-      and self.game.state['is_in_progress']
+      self.entity.id is self.game.state.get('active_player')
+      and self.game.state.get('is_in_progress')
     )
 
   def get_should_react(self, trigger_action, is_preparation):
     return (
       not is_preparation
       and trigger_action.name is 'StartTurn'
-      and self.entity is self.game.state['active_player']
+      and self.entity.id is self.game.state.get('active_player')
     )

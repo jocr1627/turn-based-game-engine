@@ -32,7 +32,7 @@ def go_fish():
   game.run()
 
   players = game.get_players()
-  hands = [player.state['hand'] for player in players]
+  hands = [player.state.get('hand') for player in players]
   hands_by_rank = []
   total = 0
 
@@ -60,7 +60,7 @@ def go_fish():
 
   print('There should be no cards left:', total)
 
-  scores = [player.state['score'] for player in players]
+  scores = [player.state.get('score') for player in players]
 
   print('Scores should add up to 13:', scores)
 

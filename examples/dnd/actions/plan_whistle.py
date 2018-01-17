@@ -9,8 +9,5 @@ class PlanWhistle(CharacterAction):
   def execute(self):
     whistle_action = Whistle(self.game, self.entity)
     ChooseCharacterTarget(self.game, self.entity, { 'action': whistle_action }).resolve()
-    planned_actions = self.entity.state['planned_actions']
-    new_planned_actions = [whistle_action]
-    self.entity.state['planned_actions'] = new_planned_actions
 
-    return { self.entity.id: { 'planned_actions': (planned_actions, new_planned_actions) } }
+    return self.entity.state.set('planned_actions', [whistle_action])

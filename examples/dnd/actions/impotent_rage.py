@@ -5,7 +5,7 @@ class ImpotentRage(CharacterAction):
   name = 'ImpotentRage'
 
   def execute(self):
-    name = self.entity.state['name']
+    name = self.entity.state.get('name')
     print(f'"ARRRGHH, WHY???!!!" - {name}')
 
     return {}

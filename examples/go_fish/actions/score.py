@@ -5,10 +5,8 @@ class Score(Action):
   name = 'Score'
 
   def execute(self):
-    score = self.entity.state['score']
-    new_score = score + 1
-    self.entity.state['score'] = new_score
-    hand = self.entity.state['hand']
+    score = self.entity.state.get('score')
+    hand = self.entity.state.get('hand')
     hand_by_rank = {}
 
     for card in hand:
@@ -28,10 +26,10 @@ class Score(Action):
       discard = Discard(self.game, self.entity, { 'card': card_to_remove })
       discard.resolve()
     
-    return { self.entity.id: { 'score': (score, new_score) } }
+    return self.entity.state.set('score', score + 1)
 
   def get_is_valid(self):
-    hand = self.entity.state['hand']
+    hand = self.entity.state.get('hand')
 
     if len(hand) < 4:
       return False

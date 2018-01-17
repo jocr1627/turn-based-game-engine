@@ -9,7 +9,7 @@ class ChooseCharacterTarget(CharacterAction):
     # assuming all children are characters (true so far)
     target = None
     for character in self.game.children.values():
-      if character.state['name'].lower() == target_name:
+      if character.state.get('name').lower() == target_name:
         target = character
 
     action = self.options['action']

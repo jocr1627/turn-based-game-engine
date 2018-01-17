@@ -4,10 +4,7 @@ class StartTurn(Action):
   name = 'StartTurn'
 
   def execute(self):
-    active_player = self.game.state['active_player']
-    self.game.state['active_player'] = self.entity
-
-    return { self.game.id: { 'active_player': (active_player, self.entity) } }
+    return self.game.state.set('active_player', self.entity.id)
 
   def get_is_valid(self):
     return self.entity.does_exist

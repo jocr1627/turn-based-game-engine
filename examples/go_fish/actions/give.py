@@ -6,10 +6,10 @@ class Give(Action):
   def execute(self):
     card = self.options['card']
     target = self.options['target']
-    self.entity.state['hand'].remove(card)
-    target.state['hand'].append(card)
+    giver_hand = self.entity.state.get('hand')
+    giver_hand.remove(card)
+    diffs = self.entity.state.set('hand', giver_hand)
+    target_hand = target.state.get('hand')
+    target_hand.append(card)
 
-    return {
-      self.entity.id: { 'hand': () },
-      target.id: { 'hand': () }
-    }
+    return target.state.set('hand', target_hand, diffs)

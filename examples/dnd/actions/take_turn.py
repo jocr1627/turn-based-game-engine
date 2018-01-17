@@ -5,7 +5,7 @@ class TakeTurn(CharacterAction):
   name = 'TakeTurn'
 
   def execute(self):
-    for action in self.entity.state['planned_actions']:
+    for action in self.entity.state.get('planned_actions'):
       action.resolve()
 
     return {}

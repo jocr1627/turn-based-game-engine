@@ -9,7 +9,7 @@ class Respond(Action):
     requested_rank = self.options['rank']
     request_class = self.options['request_class']
     requestor = self.options['requestor']
-    hand = self.entity.state['hand']
+    hand = self.entity.state.get('hand')
     matching_cards = [card for card in hand if card['rank'] == requested_rank]
 
     if len(matching_cards) > 0:

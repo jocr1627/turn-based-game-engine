@@ -18,7 +18,7 @@ class Request(Action):
 
   def get_is_valid(self):
     return (
-      self.entity is self.game.state['active_player']
-      and len(self.options['target'].state['hand']) > 0
-      and self.game.state['is_in_progress']
+      self.entity.id is self.game.state.get('active_player')
+      and len(self.options['target'].state.get('hand')) > 0
+      and self.game.state.get('is_in_progress')
     )

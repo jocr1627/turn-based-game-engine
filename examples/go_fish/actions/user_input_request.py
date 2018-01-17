@@ -5,7 +5,7 @@ class UserInputRequest(Action):
   name = 'UserInputRequest'
 
   def execute(self):
-    print(self.entity.state['hand'])
+    print(self.entity.state.get('hand'))
     rank = int(input(f'What card should {self.entity.id} request? '))
     players = self.game.get_players()
     other_player_ids = [player.id for player in players if player.id != self.entity.id]
@@ -31,13 +31,13 @@ class UserInputRequest(Action):
 
   def get_is_valid(self):
     return (
-      self.entity is self.game.state['active_player']
-      and self.game.state['is_in_progress']
+      self.entity.id is self.game.state.get('active_player')
+      and self.game.state.get('is_in_progress')
     )
 
   def get_should_react(self, trigger_action, is_preparation):
     return (
       not is_preparation
       and trigger_action.name is 'StartTurn'
-      and self.entity is self.game.state['active_player']
+      and self.entity.id is self.game.state.get('active_player')
     )

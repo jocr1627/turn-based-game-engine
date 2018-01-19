@@ -41,6 +41,7 @@ class Game(Entity):
     children=None,
     endGame=lambda: {},
     endRound=lambda: {},
+    parent=None,
     reactions=None,
     startGame=lambda: {},
     startRound=lambda: {},
@@ -52,7 +53,7 @@ class Game(Entity):
     self.startRoundFn = startRound
     self.triggers = []
 
-    super().__init__(self, children, reactions, state)
+    super().__init__(children, parent, reactions, state)
 
   def run(self):
     self.state.set('is_in_progress', False)
@@ -69,5 +70,5 @@ class Game(Entity):
     endGame = EndGame(self, self, { 'executeFn': self.endGameFn })
     endGame.resolve()
 
-  def update(self, diffs):
+  def update(self, game, diffs):
     self.state.set('is_in_progress', False)

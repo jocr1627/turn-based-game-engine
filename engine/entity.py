@@ -31,35 +31,36 @@ class State:
 class Entity:
   next_entity_id = 0
 
-  def __init__(self, game, children=None, reactions=None, state=None):
+  def __init__(self, children=None, parent=None, reactions=None, state=None):
     self.children = {}
     self.does_exist = True
-    self.id = Entity.next_entity_id
-    self.game = game
-    self.parent = None
-    self.reactions = reactions if reactions is not None else self.get_default_reactions(game)
+    self.reactions = reactions if reactions is not None else self.get_default_reactions()
     
-    raw_state = state if state is not None else self.get_default_state(game)
+    self.id = Entity.next_entity_id
+    Entity.next_entity_id += 1
+
+    raw_state = state if state is not None else self.get_default_state()
     self.state = State(self.id, raw_state)
 
-    children = children if children is not None else self.get_default_children(game)
+    children = children if children is not None else self.get_default_children()
     
     for child in children:
       self.add_child(child)
     
-    Entity.next_entity_id += 1
+    if parent is not None:
+      parent.add_child(self)
 
   def add_child(self, child):
     self.children[child.id] = child
     child.parent = self
 
-  def get_default_children(self, game):
+  def get_default_children(self):
     return []
 
-  def get_default_reactions(self, game):
+  def get_default_reactions(self):
     return []
 
-  def get_default_state(self, game):
+  def get_default_state(self):
     return {}
 
   def get_descendants(self):
@@ -76,5 +77,5 @@ class Entity:
     child.parent = None
     del self.children[child.id]
 
-  def update(self, diffs):
+  def update(self, game, diffs):
     return

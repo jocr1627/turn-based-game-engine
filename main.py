@@ -24,10 +24,7 @@ def go_fish():
       MaxValueRequest
     ]
   ]
-  players = [Player(game, reactions=reactions) for reactions in player_reactions]
-
-  for player in players:
-    game.add_child(player)
+  players = [Player(parent=game, reactions=reactions) for reactions in player_reactions]
 
   game.run()
 
@@ -88,10 +85,7 @@ def dnd():
       'planned_actions': []
     }
   ]
-  characters = [Character(game, state=state) for state in character_states]
-
-  for character in characters:
-    game.add_child(character)
+  characters = [Character(parent=game, state=state) for state in character_states]
 
   game.run()
 

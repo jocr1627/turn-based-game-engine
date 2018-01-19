@@ -6,18 +6,18 @@ from examples.go_fish.actions.score import Score
 from examples.go_fish.actions.start_turn import StartTurn
 
 class Player(Entity):
-  def get_default_reactions(self, game):
+  def get_default_reactions(self):
     return [
       MaxValueRequest,
       EndTurn,
       StartTurn
     ]
 
-  def get_default_state(self, game):
+  def get_default_state(self):
     return { 'hand': [], 'is_player': True, 'score': 0 }
   
-  def update(self, diffs):
-    drawHand = DrawHand(self.game, self)
+  def update(self, game, diffs):
+    drawHand = DrawHand(game, self)
     drawHand.resolve()
-    score = Score(self.game, self)
+    score = Score(game, self)
     score.resolve()

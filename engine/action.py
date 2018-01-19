@@ -49,10 +49,10 @@ class Action:
 
     self.game.triggers.append({ 'action': self, 'is_preparation': False })
     diffs = self.execute()
-    self.game.update(diffs)
+    self.game.update(self.game, diffs)
 
     for entity in self.game.get_descendants():
-      entity.update(diffs)
+      entity.update(self.game, diffs)
 
     self.handle_reactions()
     self.game.triggers.pop()

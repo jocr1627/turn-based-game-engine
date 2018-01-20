@@ -3,33 +3,23 @@ from examples.dnd.dnd import DnD
 from examples.dnd.actions.plan_impotent_rage import PlanImpotentRage
 from examples.dnd.actions.plan_whistle import PlanWhistle
 from examples.dnd.entities.character import Character
+from examples.go_fish.go_fish import GoFish
+from examples.go_fish.actions.draw_hand import DrawHand
 from examples.go_fish.actions.end_turn import EndTurn
 from examples.go_fish.actions.max_value_request import MaxValueRequest
+from examples.go_fish.actions.score import Score
 from examples.go_fish.actions.start_turn import StartTurn
 from examples.go_fish.actions.user_input_request import UserInputRequest
-from examples.go_fish.entities.player import Player
-from examples.go_fish.go_fish import GoFish
+from examples.go_fish.entities.computer_player import ComputerPlayer
+from examples.go_fish.entities.human_player import HumanPlayer
 
 def go_fish():
-  game = GoFish()
-  player_reactions = [
-    [
-      EndTurn,
-      StartTurn,
-      UserInputRequest
-    ],
-    [
-      EndTurn,
-      StartTurn,
-      MaxValueRequest
-    ]
-  ]
-  players = [Player(parent=game, reactions=reactions) for reactions in player_reactions]
-
+  players = [ComputerPlayer(), ComputerPlayer()]
+  game = GoFish(players)
   game.run()
 
-  players = game.get_players()
-  hands = [player.state.get('hand') for player in players]
+  players = [game.descendants[player_id] for player_id in game.get('player_ids')]
+  hands = [player.get('hand') for player in players]
   hands_by_rank = []
   total = 0
 
@@ -46,7 +36,7 @@ def go_fish():
       total += 1
 
       if hand_by_rank[rank] >= 4:
-        print('you done fucked up.', rank, hand_by_rank[rank])
+        print('you done messed up.', rank, hand_by_rank[rank])
 
     hands_by_rank.append(hand_by_rank)
 
@@ -57,7 +47,7 @@ def go_fish():
 
   print('There should be no cards left:', total)
 
-  scores = [player.state.get('score') for player in players]
+  scores = [player.get('score') for player in players]
 
   print('Scores should add up to 13:', scores)
 

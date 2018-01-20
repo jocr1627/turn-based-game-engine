@@ -1,17 +1,17 @@
-from engine.action import Action
+from engine.listener import Listener
 
-class EndTurn(Action):
+class EndTurn(Listener):
   name = 'EndTurn'
 
-  def execute(self):
-    return self.game.state.set('active_player', None)
+  def execute(self, diff, options):
+    self.root.set('active_player_id', None)
 
-  def get_is_valid(self):
-    return self.entity.id is self.game.state.get('active_player')
+  def get_is_valid(self, options):
+    return self.parent.id is self.root.get('active_player_id')
 
-  def get_should_react(self, trigger_action, is_preparation):
+  def get_should_react(self, trigger_action, diff, is_preparation):
     return (
       not is_preparation
       and trigger_action.name is 'Request'
-      and self.entity.id is self.game.state.get('active_player')
+      and self.parent.id is self.root.get('active_player_id')
     )

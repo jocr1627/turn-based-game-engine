@@ -3,10 +3,10 @@ from examples.dnd.actions.plan_turn import PlanTurn
 from examples.dnd.actions.take_turn import TakeTurn
 
 class Character(Entity):
-  def get_default_reactions(self):
+  def get_default_children(self):
     return [
-      PlanTurn,
-      TakeTurn,
+      PlanTurn(),
+      TakeTurn(),
     ]
   
   def get_default_state(self):

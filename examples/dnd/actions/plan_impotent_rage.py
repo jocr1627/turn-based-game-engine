@@ -5,5 +5,5 @@ from examples.dnd.actions.impotent_rage import ImpotentRage
 class PlanImpotentRage(CharacterAction):
   name = 'PlanImpotentRage'
 
-  def execute(self):
+  def execute(self, diff, options):
     return self.entity.state.set('planned_actions', [ImpotentRage(self.game, self.entity)])

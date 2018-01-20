@@ -4,7 +4,7 @@ from examples.dnd.actions.character_action import CharacterAction
 class ChooseCharacterTarget(CharacterAction):
   name = 'ChooseCharacterTarget'
 
-  def execute(self):
+  def execute(self, diff, options):
     target_name = input(f'Enter a target: ').lower()
     # assuming all children are characters (true so far)
     target = None

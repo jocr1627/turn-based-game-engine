@@ -1,13 +1,10 @@
-from engine.action import Action
+from engine.listener import Listener
 
-class StartTurn(Action):
+class StartTurn(Listener):
   name = 'StartTurn'
 
-  def execute(self):
-    return self.game.state.set('active_player', self.entity.id)
+  def execute(self, diff, options):
+    self.root.set('active_player_id', self.parent.id)
 
-  def get_is_valid(self):
-    return self.entity.does_exist
-
-  def get_should_react(self, trigger_action, is_preparation):
+  def get_should_react(self, trigger_action, diff, is_preparation):
     return not is_preparation and trigger_action.name is 'StartRound'

@@ -1,12 +1,11 @@
-from engine.action import Action
+from engine.listener import Listener
 from examples.go_fish.actions.discard import Discard
 
-class Score(Action):
+class Score(Listener):
   name = 'Score'
 
-  def execute(self):
-    score = self.entity.state.get('score')
-    hand = self.entity.state.get('hand')
+  def execute(self, diff, options):
+    hand = self.parent.get('hand')
     hand_by_rank = {}
 
     for card in hand:
@@ -23,13 +22,14 @@ class Score(Action):
 
     for i in range(4):
       card_to_remove = matching_cards[i]
-      discard = Discard(self.game, self.entity, { 'card': card_to_remove })
+      discard = Discard(parent=self.parent, state={ 'card': card_to_remove })
       discard.resolve()
     
-    return self.entity.state.set('score', score + 1)
+    score = self.parent.get('score')
+    self.parent.set('score', score + 1)
 
-  def get_is_valid(self):
-    hand = self.entity.state.get('hand')
+  def get_is_valid(self, options):
+    hand = self.parent.get('hand')
 
     if len(hand) < 4:
       return False
@@ -47,3 +47,8 @@ class Score(Action):
     hand_by_rank = sorted(hand_by_rank.items(), key=lambda item: item[1], reverse=True)
 
     return hand_by_rank[0][1] >= 4
+  
+  def get_should_react(self, trigger_action, diff, is_preparation):
+    hand_diff = diff.getIn(['state', self.parent.id, 'hand'])
+
+    return hand_diff is not None and len(hand_diff[1]) > len(hand_diff[0])

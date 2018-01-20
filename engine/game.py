@@ -4,71 +4,54 @@ from engine.entity import Entity
 class StartGame(Action):
   name = 'StartGame'
 
-  def execute(self):
-    diffs = self.options['executeFn']()
+  def execute(self, diff, options):
+    if hasattr(self.root, 'start_game'):
+      self.root.start_game()
 
-    return self.game.state.set('is_in_progress', True, diffs)
+    self.root.set('is_in_progress', True)
 
-  def get_is_valid(self):
-    return not self.game.state.get('is_in_progress')
+  def get_is_valid(self, options):
+    return not self.root.get('is_in_progress')
 
 class EndGame(Action):
   name = 'EndGame'
 
-  def execute(self):
-    diffs = self.options['executeFn']()
+  def execute(self, diff, options):
+    if hasattr(self.root, 'end_game'):
+      self.root.end_game()
 
-    return self.game.state.set('is_in_progress', False, diffs)
+    self.root.set('is_in_progress', False)
 
 class StartRound(Action):
   name = 'StartRound'
 
-  def execute(self):
-    diffs = self.options['executeFn']()
-    round_number = self.game.state.get('round_number')
+  def execute(self, diff, options):
+    if hasattr(self.root, 'start_round'):
+      self.root.start_round()
 
-    return self.game.state.set('round_number', round_number + 1, diffs)
+    round_number = self.root.get('round_number')
+    self.root.set('round_number', round_number + 1)
 
 class EndRound(Action):
   name = 'EndRound'
 
-  def execute(self):
-    return self.options['executeFn']()
+  def execute(self, diff, options):
+    if hasattr(self.root, 'end_round'):
+      self.root.end_round()
 
 class Game(Entity):
-  def __init__(
-    self,
-    children=None,
-    endGame=lambda: {},
-    endRound=lambda: {},
-    parent=None,
-    reactions=None,
-    startGame=lambda: {},
-    startRound=lambda: {},
-    state=None
-  ):
-    self.endGameFn = endGame
-    self.endRoundFn = endRound
-    self.startGameFn = startGame
-    self.startRoundFn = startRound
-    self.triggers = []
-
-    super().__init__(children, parent, reactions, state)
-
   def run(self):
-    self.state.set('is_in_progress', False)
-    self.state.set('round_number', 0)
-    startGame = StartGame(self, self, { 'executeFn': self.startGameFn })
-    startGame.resolve()
+    self.triggers = []
+    self.set('is_in_progress', False)
+    self.set('round_number', 0)
+    start_game = StartGame(parent=self)
+    start_game.resolve()
 
-    while self.state.get('is_in_progress'):
-      startRound = StartRound(self, self, { 'executeFn': self.startRoundFn })
-      startRound.resolve()
-      endRound = EndRound(self, self, { 'executeFn': self.endRoundFn })
-      endRound.resolve()
+    while self.get('is_in_progress'):
+      start_round = StartRound(parent=self)
+      start_round.resolve()
+      end_round = EndRound(parent=self)
+      end_round.resolve()
   
-    endGame = EndGame(self, self, { 'executeFn': self.endGameFn })
-    endGame.resolve()
-
-  def update(self, game, diffs):
-    self.state.set('is_in_progress', False)
+    end_game = EndGame(parent=self)
+    end_game.resolve()

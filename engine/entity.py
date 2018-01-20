@@ -84,6 +84,30 @@ class Entity:
   
   def hasIn(self, keys):
     return self.state.hasIn(keys)
+  
+  def inspect(self, key, getter):
+    return self.state.inspect(key, getter)
+  
+  def inspectIn(self, keys, getter):
+    return self.state.inspectIn(keys, getter)
+
+  def mutate(self, key, mutation):
+    original_value = self.state.get(key)
+    self.state.mutate(key, mutation)
+    value = self.state.__get__(key)
+    
+    if len(self.root.diffs) > 0:
+      diff = self.root.diffs[-1]
+      diff.setIn(['state', self.id, key], (original_value, value))
+  
+  def mutateIn(self, keys, mutation):
+    original_value = self.state.getIn(keys)
+    self.state.mutateIn(keys, mutation)
+    value = self.state.__getIn__(keys)
+    
+    if len(self.root.diffs) > 0:
+      diff = self.root.diffs[-1]
+      diff.setIn(['state', self.id, *keys], (original_value, value))
 
   def remove_child(self, child, diff=Diff()):
     if child.id in self.children:
@@ -109,7 +133,7 @@ class Entity:
         diff.setIn(['children', self.id, child.id], (child, None))
   
   def set(self, key, value):
-    original_value = self.get(key)
+    original_value = self.state.get(key)
     self.state.set(key, value)
     
     if len(self.root.diffs) > 0:
@@ -117,7 +141,7 @@ class Entity:
       diff.setIn(['state', self.id, key], (original_value, value))
   
   def setIn(self, keys, value):
-    original_value = self.getIn(keys)
+    original_value = self.state.getIn(keys)
     self.state.setIn(keys, value)
     
     if len(self.root.diffs) > 0:

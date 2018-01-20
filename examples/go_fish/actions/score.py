@@ -49,6 +49,7 @@ class Score(Listener):
     return hand_by_rank[0][1] >= 4
   
   def get_should_react(self, trigger_action, diff, is_preparation):
-    hand_diff = diff.getIn(['state', self.parent.id, 'hand'])
-
-    return hand_diff is not None and len(hand_diff[1]) > len(hand_diff[0])
+    return diff.inspectIn(
+      ['state', self.parent.id, 'hand'],
+      lambda hand_diff: hand_diff is not None and len(hand_diff[1]) > len(hand_diff[0])
+    )

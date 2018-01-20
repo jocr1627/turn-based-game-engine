@@ -4,12 +4,9 @@ class Draw(Action):
   name = 'Draw'
 
   def execute(self, diff, options):
-    deck = self.root.get('deck')
-    card = deck.pop()
-    self.root.set('deck', deck)
-    hand = self.parent.get('hand')
-    hand.append(card)
-    self.parent.set('hand', hand)
+    card = self.root.getIn(['deck', -1])
+    self.root.mutate('deck', lambda deck: deck.pop())
+    self.parent.mutate('hand', lambda hand: hand.append(card))
 
   def get_is_valid(self, options):
-    return len(self.root.get('deck')) > 0
+    return self.root.inspect('deck', lambda deck: len(deck) > 0)

@@ -5,9 +5,9 @@ class Discard(Action):
 
   def execute(self, diff, options):
     card = self.get('card')
-    hand = self.parent.get('hand')
-    hand.remove(card)
-    self.parent.set('hand', hand)
+    self.parent.mutate('hand', lambda hand: hand.remove(card))
 
   def get_is_valid(self, options):
-    return self.get('card') in self.parent.get('hand')
+    card = self.get('card')
+
+    return self.parent.inspect('hand', lambda hand: card in hand)

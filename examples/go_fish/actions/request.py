@@ -21,6 +21,6 @@ class Request(Action):
 
     return (
       self.parent.id is self.root.get('active_player_id')
-      and len(target.get('hand')) > 0
+      and target.inspect('hand', lambda hand: len(hand) > 0)
       and self.root.get('is_in_progress')
     )

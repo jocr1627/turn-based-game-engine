@@ -7,9 +7,5 @@ class Give(Action):
     card = self.get('card')
     target_id = self.get('target_id')
     target = self.root.descendants[target_id]
-    giver_hand = self.parent.get('hand')
-    giver_hand.remove(card)
-    self.parent.set('hand', giver_hand)
-    target_hand = target.get('hand')
-    target_hand.append(card)
-    target.set('hand', target_hand)
+    giver_hand = self.parent.mutate('hand', lambda hand: hand.remove(card))
+    target_hand = target.mutate('hand', lambda hand: hand.append(card))

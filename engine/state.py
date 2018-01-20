@@ -7,19 +7,27 @@ class State:
   def __contains__(self, key):
     return key in self.raw_state
 
-  def get(self, key):
-    return deepcopy(self.raw_state[key]) if key in self.raw_state else None
+  def __get__(self, key):
+    return self.raw_state[key] if key in self.raw_state else None
   
-  def getIn(self, keys):
+  def __getIn__(self, keys):
     state_slice = self.raw_state
 
     for key in keys:
-      if key not in state_slice:
+      try:
+        state_slice = state_slice[key]
+      except IndexError:
         return None
-      
-      state_slice = state_slice[key]
-    
-    return deepcopy(state_slice) 
+      except KeyError:
+        return None
+
+    return state_slice
+
+  def get(self, key):
+    return deepcopy(self.__get__(key))
+  
+  def getIn(self, keys):
+    return deepcopy(self.__getIn__(keys)) 
 
   def has(self, key):
     return self.__contains__(key)
@@ -34,6 +42,24 @@ class State:
       state_slice = state_slice[key]
     
     return True
+
+  def inspect(self, key, getter):
+    state_slice = self.__get__(key)
+
+    return getter(state_slice)
+  
+  def inspectIn(self, keys, getter):
+    state_slice = self.__getIn__(keys)
+
+    return getter(state_slice)
+
+  def mutate(self, key, mutation):
+    state_slice = self.__get__(key)
+    mutation(state_slice)
+  
+  def mutateIn(self, keys, mutation):
+    state_slice = self.__getIn__(keys)
+    mutation(state_slice)
 
   def set(self, key, value):
     self.raw_state[key] = value

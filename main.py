@@ -1,3 +1,4 @@
+import cProfile
 import sys
 from examples.dnd.dnd import DnD
 from examples.dnd.actions.plan_impotent_rage import PlanImpotentRage
@@ -14,7 +15,7 @@ from examples.go_fish.entities.computer_player import ComputerPlayer
 from examples.go_fish.entities.human_player import HumanPlayer
 
 def go_fish():
-  players = [ComputerPlayer(), ComputerPlayer()]
+  players = [ComputerPlayer() for i in range(2)]
   game = GoFish(players)
   game.run()
 
@@ -82,6 +83,12 @@ def dnd():
 game_name = sys.argv[1] if len(sys.argv) > 1 else None
 
 if game_name == 'dnd':
-  dnd()
+  if 'profile' in sys.argv:
+    cProfile.run('dnd()')
+  else:
+    dnd()
 else:
-  go_fish()
+  if 'profile' in sys.argv:
+    cProfile.run('go_fish()')
+  else:
+    go_fish()

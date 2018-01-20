@@ -30,7 +30,7 @@ class MaxValueRequest(Listener):
     return (
       self.parent.id is self.root.get('active_player_id')
       and self.root.get('is_in_progress')
-      and len(self.parent.get('hand')) > 0
+      and self.parent.inspect('hand', lambda hand: len(hand) > 0)
     )
 
   def get_should_react(self, trigger_action, diff, is_preparation):

@@ -11,15 +11,15 @@ class DrawHand(Listener):
 
   def get_is_valid(self, options):
     return (
-      len(self.root.get('deck')) > 0
-      and len(self.parent.get('hand')) == 0
+      self.root.inspect('deck', lambda deck: len(deck) > 0)
+      and self.parent.inspect('hand', lambda hand: len(hand) == 0)
     )
 
   def get_should_react(self, trigger_action, diff, is_preparation):
     return (
       (not is_preparation and trigger_action.name is 'StartGame')
-      or (
-        diff.hasIn(['state', self.parent.id, 'hand'])
-        and len(diff.getIn(['state', self.parent.id, 'hand'])[1]) == 0
+      or diff.inspectIn(
+        ['state', self.parent.id, 'hand'],
+        lambda hand_diff: hand_diff is not None and len(hand_diff[1]) == 0
       )
     )

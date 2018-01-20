@@ -1,12 +1,10 @@
 from engine.action import Action
 
 class Draw(Action):
-  name = 'Draw'
-
-  def execute(self, diff, options):
+  def execute(self, diff):
     card = self.root.getIn(['deck', -1])
     self.root.mutate('deck', lambda deck: deck.pop())
     self.parent.mutate('hand', lambda hand: hand.append(card))
 
-  def get_is_valid(self, options):
+  def get_is_valid(self):
     return self.root.inspect('deck', lambda deck: len(deck) > 0)

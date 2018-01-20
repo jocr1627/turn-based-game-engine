@@ -4,9 +4,7 @@ from examples.dnd.actions.whistle import Whistle
 from examples.dnd.actions.choose_character_target import ChooseCharacterTarget
 
 class PlanWhistle(CharacterAction):
-  name = 'PlanWhistle'
-
-  def execute(self, diff, options):
+  def execute(self, diff):
     whistle_action = Whistle(self.game, self.entity)
     ChooseCharacterTarget(self.game, self.entity, { 'action': whistle_action }).resolve()
 

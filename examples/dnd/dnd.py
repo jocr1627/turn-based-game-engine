@@ -4,6 +4,6 @@ from engine.entity import Entity
 from engine.game import Game
 
 class DnD(Game):
-  def update(self, game, diffs):
-    if self.state.get('round_number') == 2:
-      self.state.set('is_in_progress', False)
+  def end_round(self):
+    if self.get('round_number') == 2:
+      self.set('is_in_progress', False)

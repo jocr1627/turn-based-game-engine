@@ -3,9 +3,7 @@ from engine.listener import Listener
 from examples.go_fish.actions.request import Request
 
 class MaxValueRequest(Listener):
-  name = 'MaxValueRequest'
-
-  def execute(self, diff, options):
+  def execute(self, diff):
     hand = self.parent.get('hand')
     hand_by_rank = {}
 
@@ -21,12 +19,13 @@ class MaxValueRequest(Listener):
     rank = hand_by_rank[0][0]
     other_player_ids = [player_id for player_id in self.root.get('player_ids') if player_id != self.parent.id]
     target_id = random.choice(other_player_ids)
-    action = Request(parent=self.parent, state={ 'rank': rank, 'target_id': target_id })
-    action.resolve(options={ 'request_class': self.__class__ })
+    request_state = { 'rank': rank, 'request_class_name': self.get_name(), 'target_id': target_id }
+    action = Request(parent=self.parent, state=request_state)
+    action.resolve()
 
     return {}
 
-  def get_is_valid(self, options):
+  def get_is_valid(self):
     return (
       self.parent.id is self.root.get('active_player_id')
       and self.root.get('is_in_progress')
@@ -36,6 +35,6 @@ class MaxValueRequest(Listener):
   def get_should_react(self, trigger_action, diff, is_preparation):
     return (
       not is_preparation
-      and trigger_action.name is 'StartTurn'
+      and trigger_action.get_name() is 'StartTurn'
       and self.parent.id is self.root.get('active_player_id')
     )

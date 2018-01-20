@@ -15,7 +15,7 @@ from examples.go_fish.entities.computer_player import ComputerPlayer
 from examples.go_fish.entities.human_player import HumanPlayer
 
 def go_fish():
-  players = [ComputerPlayer() for i in range(2)]
+  players = [HumanPlayer(), ComputerPlayer()]
   game = GoFish(players)
   game.run()
 

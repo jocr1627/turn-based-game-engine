@@ -2,9 +2,7 @@ from engine.listener import Listener
 from examples.go_fish.actions.discard import Discard
 
 class Score(Listener):
-  name = 'Score'
-
-  def execute(self, diff, options):
+  def execute(self, diff):
     hand = self.parent.get('hand')
     hand_by_rank = {}
 
@@ -28,7 +26,7 @@ class Score(Listener):
     score = self.parent.get('score')
     self.parent.set('score', score + 1)
 
-  def get_is_valid(self, options):
+  def get_is_valid(self):
     hand = self.parent.get('hand')
 
     if len(hand) < 4:

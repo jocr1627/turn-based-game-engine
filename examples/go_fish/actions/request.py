@@ -2,20 +2,16 @@ from engine.action import Action
 from examples.go_fish.actions.respond import Respond
 
 class Request(Action):
-  name = 'Request'
-
-  def execute(self, diff, options):
+  def execute(self, diff):
     rank = self.get('rank')
+    request_class_name = self.get('request_class_name')
     target_id = self.get('target_id')
-    request_class = options['request_class']
     target = self.root.descendants[target_id]
-    respond = Respond(parent=target, state={ 'rank': rank, 'requestor_id': self.parent.id })
-    respond.resolve(options={'request_class': request_class})
-  
-  def get_is_cycle(self):
-    return False
+    respond_state = { 'rank': rank, 'request_class_name': request_class_name, 'requestor_id': self.parent.id }
+    respond = Respond(parent=target, state=respond_state)
+    respond.resolve()
 
-  def get_is_valid(self, options):
+  def get_is_valid(self):
     target_id = self.get('target_id')
     target = self.root.descendants[target_id]
 

@@ -2,30 +2,24 @@ from engine.action import Action
 from engine.entity import Entity
 
 class StartGame(Action):
-  name = 'StartGame'
-
-  def execute(self, diff, options):
+  def execute(self, diff):
     if hasattr(self.root, 'start_game'):
       self.root.start_game()
 
     self.root.set('is_in_progress', True)
 
-  def get_is_valid(self, options):
+  def get_is_valid(self):
     return not self.root.get('is_in_progress')
 
 class EndGame(Action):
-  name = 'EndGame'
-
-  def execute(self, diff, options):
+  def execute(self, diff):
     if hasattr(self.root, 'end_game'):
       self.root.end_game()
 
     self.root.set('is_in_progress', False)
 
 class StartRound(Action):
-  name = 'StartRound'
-
-  def execute(self, diff, options):
+  def execute(self, diff):
     if hasattr(self.root, 'start_round'):
       self.root.start_round()
 
@@ -33,9 +27,7 @@ class StartRound(Action):
     self.root.set('round_number', round_number + 1)
 
 class EndRound(Action):
-  name = 'EndRound'
-
-  def execute(self, diff, options):
+  def execute(self, diff):
     if hasattr(self.root, 'end_round'):
       self.root.end_round()
 

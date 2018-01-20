@@ -4,9 +4,10 @@ from engine.state import State
 class Entity:
   next_entity_id = 0
 
-  def __init__(self, children=[], parent=None, state={}):
+  def __init__(self, children=[], entity_classes={}, parent=None, state={}):
     self.descendants = {}
     self.diffs = []
+    self.entity_classes = entity_classes
     self.listeners = {}
     self.parent = None
     self.root = self
@@ -78,6 +79,10 @@ class Entity:
       descendants = child.get_descendants(descendants)
     
     return descendants
+
+  @classmethod
+  def get_name(clazz):
+    return clazz.__name__
 
   def has(self, key):
     return self.state.has(key)

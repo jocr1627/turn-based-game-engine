@@ -1,9 +1,7 @@
 from engine.action import Action
 
 class Give(Action):
-  name = 'Give'
-
-  def execute(self, diff, options):
+  def execute(self, diff):
     card = self.get('card')
     target_id = self.get('target_id')
     target = self.root.descendants[target_id]

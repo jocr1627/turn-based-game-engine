@@ -1,9 +1,7 @@
 from engine.listener import Listener
 
 class PlanTurn(Listener):
-  name = 'PlanTurn'
-
-  def execute(self, diff, options):
+  def execute(self, diff):
     actions = self.entity.state.get('actions')
     name = self.entity.state.get('name')
     action_name = input(f'Enter an action for player {name}: ').lower()
@@ -21,4 +19,4 @@ class PlanTurn(Listener):
     return diffs
 
   def get_should_react(self, trigger_action, diff, is_preparation):
-    return is_preparation and trigger_action.name is 'StartRound'
+    return is_preparation and trigger_action.get_name() is 'StartRound'

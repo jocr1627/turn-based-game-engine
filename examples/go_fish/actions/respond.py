@@ -3,12 +3,10 @@ from examples.go_fish.actions.draw import Draw
 from examples.go_fish.actions.give import Give
 
 class Respond(Action):
-  name = 'Respond'
-
-  def execute(self, diff, options):
+  def execute(self, diff):
     requested_rank = self.get('rank')
+    request_class_name = self.get('request_class_name')
     requestor_id = self.get('requestor_id')
-    request_class = options['request_class']
     requestor = self.root.descendants[requestor_id]
     hand = self.parent.get('hand')
     matching_cards = [card for card in hand if card['rank'] == requested_rank]
@@ -16,6 +14,7 @@ class Respond(Action):
     if len(matching_cards) > 0:
       give = Give(parent=self.parent, state={ 'card': matching_cards[0], 'target_id': requestor_id })
       give.resolve()
+      request_class = self.root.entity_classes[request_class_name]
       request = request_class(parent=requestor)
       request.resolve()
     else:

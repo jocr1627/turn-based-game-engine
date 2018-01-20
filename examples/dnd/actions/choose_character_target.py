@@ -2,9 +2,7 @@ from engine.action import Action
 from examples.dnd.actions.character_action import CharacterAction
 
 class ChooseCharacterTarget(CharacterAction):
-  name = 'ChooseCharacterTarget'
-
-  def execute(self, diff, options):
+  def execute(self, diff):
     target_name = input(f'Enter a target: ').lower()
     # assuming all children are characters (true so far)
     target = None
@@ -17,4 +15,4 @@ class ChooseCharacterTarget(CharacterAction):
     action.options['target'] = target
 
     # TODO: better key. Should actions get ids as well?
-    return { action.name: { 'target': (old_target, target) } }
+    return { action.get_name(): { 'target': (old_target, target) } }

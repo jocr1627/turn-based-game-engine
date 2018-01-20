@@ -4,7 +4,19 @@ from examples.go_fish.actions.request import Request
 class UserInputRequest(Listener):
   def execute(self, diff):
     print(self.parent.get('hand'))
-    rank = int(input(f'What card should {self.parent.id} request? '))
+    rank = None
+
+    while rank is None:
+      try:
+        input_value = input(f'What card should {self.parent.id} request? ')
+        rank = int(input_value)
+
+        if rank < 0 or rank > 12:
+          rank = None
+          raise ValueError
+      except ValueError:
+        print(f'{input_value} is not a valid rank')
+
     player_ids = self.root.get('player_ids')
     other_player_ids = [player_id for player_id in player_ids if player_id != self.parent.id]
     is_target_found = False

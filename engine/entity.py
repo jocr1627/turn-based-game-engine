@@ -30,6 +30,22 @@ class Entity:
       raw_state[key] = value
 
     self.state = State(raw_state)
+  
+  def __hydrate__(self, value):
+    if type(value) is list:
+      hydrated_values = []
+
+      for entity_id in value:
+        entity = None
+
+        if entity_id in self.root.descendants:
+          entity = self.root.descendants[entity_id]
+        
+        hydrated_values.append(entity)
+      
+      return hydrated_values
+    elif value in self.root.descendants:
+      return self.root.descendants[value]
 
   def add_child(self, child, diff=Diff()):
     if child.id not in self.children:
@@ -90,6 +106,12 @@ class Entity:
   def hasIn(self, keys):
     return self.state.hasIn(keys)
   
+  def hydrate(self, key):
+    return self.__hydrate__(self.get(key))
+  
+  def hydrateIn(self, keys):
+    return self.__hydrate__(self.getIn(keys))
+
   def inspect(self, key, getter):
     return self.state.inspect(key, getter)
   

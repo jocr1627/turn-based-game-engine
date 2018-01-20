@@ -15,8 +15,7 @@ class GoFish(Game):
     super().__init__(children=players, entity_classes=entity_classes, state={ 'player_ids': player_ids })
   
   def end_round(self):
-    player_ids = self.get('player_ids')
-    players = [self.descendants[player_id] for player_id in player_ids]
+    players = self.hydrate('player_ids')
     are_cards_in_hands = any(
       map(
         lambda player: player.inspect('hand', lambda hand: len(hand) > 0),

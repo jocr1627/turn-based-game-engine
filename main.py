@@ -17,8 +17,7 @@ def go_fish():
   game = GoFish(players)
   game.run()
 
-  players = [game.descendants[player_id] for player_id in game.get('player_ids')]
-  hands = [player.get('hand') for player in players]
+  hands = [player.get('hand') for player in game.hydrate('player_ids')]
   hands_by_rank = []
   total = 0
 

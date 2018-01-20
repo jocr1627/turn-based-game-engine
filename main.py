@@ -1,8 +1,6 @@
 import cProfile
 import sys
 from examples.dnd.dnd import DnD
-from examples.dnd.actions.plan_impotent_rage import PlanImpotentRage
-from examples.dnd.actions.plan_whistle import PlanWhistle
 from examples.dnd.entities.character import Character
 from examples.go_fish.go_fish import GoFish
 from examples.go_fish.actions.draw_hand import DrawHand
@@ -53,31 +51,24 @@ def go_fish():
   print('Scores should add up to 13:', scores)
 
 def dnd():
-  game = DnD()
   character_states = [
     {
-      'actions': {
-        'rage': PlanImpotentRage,
-        'whistle': PlanWhistle,
-      },
-      'charisma': 5,
-      'initiative': 0,
-      'name': 'Nigel',
-      'planned_actions': []
+      'abilities': [
+        'PlanImpotentRage',
+        'PlanWhistle',
+      ],
+      'name': 'Nigel'
     },
     {
-      'actions': {
-        'rage': PlanImpotentRage,
-        'whistle': PlanWhistle,
-      },
-      'charisma': 2,
-      'initiative': 0,
-      'name': 'John',
-      'planned_actions': []
+      'abilities': [
+        'PlanImpotentRage',
+        'PlanWhistle',
+      ],
+      'name': 'John'
     }
   ]
-  characters = [Character(parent=game, state=state) for state in character_states]
-
+  characters = [Character(state=state) for state in character_states]
+  game = DnD(characters)
   game.run()
 
 game_name = sys.argv[1] if len(sys.argv) > 1 else None

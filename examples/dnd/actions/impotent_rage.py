@@ -1,9 +1,7 @@
 from engine.action import Action
-from examples.dnd.actions.character_action import CharacterAction
 
-class ImpotentRage(CharacterAction):
+class ImpotentRage(Action):
   def execute(self, diff):
-    name = self.entity.state.get('name')
+    name = self.parent.get('name')
     print(f'"ARRRGHH, WHY???!!!" - {name}')
 
-    return {}

@@ -35,7 +35,7 @@ class GoFish(Game):
 
   def get_default_state(self):
     suites = ['clubs', 'diamonds', 'hearts', 'spades']
-    deck = [{ 'suite': suite, 'rank': rank } for rank in range(100) for suite in suites]
+    deck = [{ 'suite': suite, 'rank': rank } for rank in range(13) for suite in suites]
     random.shuffle(deck)
 
     return { 'active_player_id': None, 'deck': deck, 'player_ids': [] }

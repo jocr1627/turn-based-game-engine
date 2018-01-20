@@ -23,8 +23,6 @@ class MaxValueRequest(Listener):
     action = Request(parent=self.parent, state=request_state)
     action.resolve()
 
-    return {}
-
   def get_is_valid(self):
     return (
       self.parent.id is self.root.get('active_player_id')

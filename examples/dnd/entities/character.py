@@ -11,9 +11,7 @@ class Character(Entity):
   
   def get_default_state(self):
     return {
-      'actions': {},
-      'charisma': 0,
-      'initiative': 0,
+      'abilities': {},
       'name': None,
-      'planned_actions': []
+      'planned_action_id': None
     }

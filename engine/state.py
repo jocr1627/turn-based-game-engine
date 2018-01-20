@@ -53,14 +53,6 @@ class State:
 
     return getter(state_slice)
 
-  def mutate(self, key, mutation):
-    state_slice = self.__get__(key)
-    mutation(state_slice)
-  
-  def mutateIn(self, keys, mutation):
-    state_slice = self.__getIn__(keys)
-    mutation(state_slice)
-
   def set(self, key, value):
     self.raw_state[key] = value
   
@@ -77,3 +69,11 @@ class State:
       state_slice = state_slice[key]
   
     state_slice[keys[-1]] = value
+
+  def update(self, key, updater):
+    state_slice = self.__get__(key)
+    updater(state_slice)
+  
+  def updateIn(self, keys, updater):
+    state_slice = self.__getIn__(keys)
+    updater(state_slice)

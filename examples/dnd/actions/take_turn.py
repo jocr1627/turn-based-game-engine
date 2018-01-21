@@ -10,8 +10,9 @@ class TakeTurn(Listener):
 
   def get_priority(self):
     planned_action = self.parent.hydrate('planned_action_id')
+    initiative = planned_action.get('initiative')
 
-    return planned_action.get('initiative') if planned_action is not None else 0
+    return initiative if initiative is not None else 0
 
   def get_should_react(self, trigger_action, diff, is_preparation):
     return (

@@ -2,12 +2,13 @@ from engine.action import Action
 
 class ChooseCharacterTarget(Action):
   def execute(self, diff):
+    name = self.parent.parent.get('name')
     characters = self.root.hydrate('character_ids')
     character_names = [character.get('name') for character in characters]
     target_id = None
 
     while target_id is None:
-      target_name = input(f'Enter a target: ').lower()
+      target_name = input(f'Enter {name}\'s target: ').lower()
 
       for character in characters:
         if character.get('name').lower() == target_name:

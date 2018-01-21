@@ -5,7 +5,8 @@ from examples.dnd.actions.choose_character_target import ChooseCharacterTarget
 class PlanWhistle(Action):
   def execute(self, diff):
     whistle = Whistle(parent=self.parent)
-    ChooseCharacterTarget(parent=self, state={ 'action_id': whistle.id }).resolve()
+    choose_character_target = ChooseCharacterTarget(parent=self, state={ 'action_id': whistle.id })
+    choose_character_target.resolve()
     name = self.parent.get('name')
     initiative = None
 

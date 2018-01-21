@@ -1,18 +1,23 @@
-from engine.action import Action
+from engine.listener import Listener
 from examples.go_fish.actions.draw  import Draw
 
-class DrawHand(Action):
-  name = 'DrawHand'
-
-  def execute(self):
+class DrawHand(Listener):
+  def execute(self, diff):
     for i in range(5):
-      draw = Draw(self.game, self.entity)
+      draw = Draw(parent=self.parent)
       draw.resolve()
-    
-    return {}
 
   def get_is_valid(self):
     return (
-      len(self.game.state.get('deck')) > 0
-      and len(self.entity.state.get('hand')) == 0
+      self.root.inspect('deck', lambda deck: len(deck) > 0)
+      and self.parent.inspect('hand', lambda hand: len(hand) == 0)
+    )
+
+  def get_should_react(self, trigger_action, diff, is_preparation):
+    return (
+      (not is_preparation and trigger_action.get_name() is 'StartGame')
+      or diff.inspectIn(
+        ['state', self.parent.id, 'hand'],
+        lambda hand_diff: hand_diff is not None and len(hand_diff[1]) == 0
+      )
     )

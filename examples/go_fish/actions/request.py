@@ -2,23 +2,17 @@ from engine.action import Action
 from examples.go_fish.actions.respond import Respond
 
 class Request(Action):
-  name = 'Request'
-
-  def execute(self):
-    rank = self.options['rank']
-    request_class = self.options['request_class']
-    target = self.options['target']
-    respond = Respond(self.game, target, { 'rank': rank, 'request_class': request_class, 'requestor': self.entity })
+  def execute(self, diff):
+    rank = self.get('rank')
+    request_class_name = self.get('request_class_name')
+    target = self.hydrate('target_id')
+    respond_state = { 'rank': rank, 'request_class_name': request_class_name, 'requestor_id': self.parent.id }
+    respond = Respond(parent=target, state=respond_state)
     respond.resolve()
-
-    return {}
-  
-  def get_is_cycle(self):
-    return False
 
   def get_is_valid(self):
     return (
-      self.entity.id is self.game.state.get('active_player')
-      and len(self.options['target'].state.get('hand')) > 0
-      and self.game.state.get('is_in_progress')
+      self.parent.id is self.root.get('active_player_id')
+      and self.hydrate('target_id').inspect('hand', lambda hand: len(hand) > 0)
+      and self.root.get('is_in_progress')
     )

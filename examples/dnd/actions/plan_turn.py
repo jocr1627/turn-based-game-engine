@@ -1,24 +1,36 @@
-from engine.action import Action
+import re
+from engine.listener import Listener
 
-class PlanTurn(Action):
-  name = 'PlanTurn'
+text_to_abilities = {
+  r'(impotent)?\s*rage': 'PlanImpotentRage',
+  r'whistle': 'PlanWhistle',
+}
 
-  def execute(self):
-    actions = self.entity.state.get('actions')
-    name = self.entity.state.get('name')
-    action_name = input(f'Enter an action for player {name}: ').lower()
-    diffs = {}
+class PlanTurn(Listener):
+  def execute(self, diff):
+    abilities = self.parent.get('abilities')
+    name = self.parent.get('name')
+    action_class = None
 
-    if action_name in actions:
-      action = actions[action_name](self.game, self.entity)
-      action.resolve()
-      initiative = int(input(f'Enter initiative roll for {name}: '))
-      initiative += self.entity.state.get('charisma')
-      diffs = self.entity.state.set('initiative', initiative)
-    else:
-      print('I ain\'t got that yo')
+    while action_class is None:
+      action_name = input(f'Enter an action for player {name}: ').lower()
 
-    return diffs
+      for matcher in text_to_abilities:
+        if re.match(matcher, action_name):
+          action_class_name = text_to_abilities[matcher]
+          
+          if action_class_name in abilities:
+            action_class = self.root.entity_classes[action_class_name]
+          else:
+            print(f'{name} does not have the ability to perform {action_name}.')
 
-  def get_should_react(self, trigger_action, is_preparation):
-    return is_preparation and trigger_action.name is 'StartRound'
+          break
+      
+      if action_class is None:
+        print(f'{action_name} does match any known abilities. Options include: {text_to_abilities} Try again.')
+
+    action = action_class(parent=self.parent)
+    action.resolve()
+
+  def get_should_react(self, trigger_action, diff, is_preparation):
+    return is_preparation and trigger_action.get_name() is 'StartRound'

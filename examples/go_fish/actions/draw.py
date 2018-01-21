@@ -1,16 +1,10 @@
 from engine.action import Action
 
 class Draw(Action):
-  name = 'Draw'
-
-  def execute(self):
-    deck = self.game.state.get('deck')
-    card = deck.pop()
-    diffs = self.game.state.set('deck', deck)
-    hand = self.entity.state.get('hand')
-    hand.append(card)
-
-    return self.entity.state.set('hand', hand, diffs)
+  def execute(self, diff):
+    card = self.root.getIn(['deck', -1])
+    self.root.update('deck', lambda deck: deck.pop())
+    self.parent.update('hand', lambda hand: hand.append(card))
 
   def get_is_valid(self):
-    return len(self.game.state.get('deck')) > 0
+    return self.root.inspect('deck', lambda deck: len(deck) > 0)

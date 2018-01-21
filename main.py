@@ -1,38 +1,24 @@
+import cProfile
 import sys
 from examples.dnd.dnd import DnD
-from examples.dnd.actions.plan_impotent_rage import PlanImpotentRage
-from examples.dnd.actions.plan_whistle import PlanWhistle
 from examples.dnd.entities.character import Character
+from examples.dnd.entities.location import Location
+from examples.go_fish.go_fish import GoFish
+from examples.go_fish.actions.draw_hand import DrawHand
 from examples.go_fish.actions.end_turn import EndTurn
 from examples.go_fish.actions.max_value_request import MaxValueRequest
+from examples.go_fish.actions.score import Score
 from examples.go_fish.actions.start_turn import StartTurn
 from examples.go_fish.actions.user_input_request import UserInputRequest
-from examples.go_fish.entities.player import Player
-from examples.go_fish.go_fish import GoFish
+from examples.go_fish.entities.computer_player import ComputerPlayer
+from examples.go_fish.entities.human_player import HumanPlayer
 
 def go_fish():
-  game = GoFish()
-  player_reactions = [
-    [
-      EndTurn,
-      StartTurn,
-      UserInputRequest
-    ],
-    [
-      EndTurn,
-      StartTurn,
-      MaxValueRequest
-    ]
-  ]
-  players = [Player(game, reactions=reactions) for reactions in player_reactions]
-
-  for player in players:
-    game.add_child(player)
-
+  players = [HumanPlayer(), ComputerPlayer()]
+  game = GoFish(players)
   game.run()
 
-  players = game.get_players()
-  hands = [player.state.get('hand') for player in players]
+  hands = [player.get('hand') for player in game.hydrate('player_ids')]
   hands_by_rank = []
   total = 0
 
@@ -49,7 +35,7 @@ def go_fish():
       total += 1
 
       if hand_by_rank[rank] >= 4:
-        print('you done fucked up.', rank, hand_by_rank[rank])
+        print('you done messed up.', rank, hand_by_rank[rank])
 
     hands_by_rank.append(hand_by_rank)
 
@@ -60,44 +46,42 @@ def go_fish():
 
   print('There should be no cards left:', total)
 
-  scores = [player.state.get('score') for player in players]
+  scores = [player.get('score') for player in players]
 
   print('Scores should add up to 13:', scores)
 
 def dnd():
-  game = DnD()
-  character_states = [
-    {
-      'actions': {
-        'rage': PlanImpotentRage,
-        'whistle': PlanWhistle,
-      },
-      'charisma': 5,
-      'initiative': 0,
-      'name': 'Nigel',
-      'planned_actions': []
-    },
-    {
-      'actions': {
-        'rage': PlanImpotentRage,
-        'whistle': PlanWhistle,
-      },
-      'charisma': 2,
-      'initiative': 0,
-      'name': 'John',
-      'planned_actions': []
-    }
+  bar = Location('bar')
+  door = Location('door', [bar])
+  stairs = Location('stairs', [bar])
+  upstairs = Location('upstairs', [stairs])
+  locations = [
+    bar,
+    door,
+    stairs,
+    upstairs
   ]
-  characters = [Character(game, state=state) for state in character_states]
-
-  for character in characters:
-    game.add_child(character)
-
+  abilities = [
+    'PlanImpotentRage',
+    'PlanMove',
+    'PlanWhistle',
+  ]
+  characters = [
+    Character('Nigel', stairs, abilities),
+    Character('John', bar, abilities)
+  ]
+  game = DnD(characters, locations)
   game.run()
 
 game_name = sys.argv[1] if len(sys.argv) > 1 else None
 
 if game_name == 'dnd':
-  dnd()
+  if 'profile' in sys.argv:
+    cProfile.run('dnd()', sort='cumtime')
+  else:
+    dnd()
 else:
-  go_fish()
+  if 'profile' in sys.argv:
+    cProfile.run('go_fish()', sort='cumtime')
+  else:
+    go_fish()

@@ -1,12 +1,8 @@
 from engine.action import Action
-from examples.dnd.actions.character_action import CharacterAction
 
-class Whistle(CharacterAction):
-  name = 'Whistle'
-
-  def execute(self):
-    name = self.entity.state.get('name')
-    target_name = self.options['target'].state.get('name')
+class Whistle(Action):
+  def execute(self, diff):
+    name = self.parent.get('name')
+    target = self.hydrate('target_id')
+    target_name = target.get('name')
     print(f'{name} whistled to {target_name}')
-
-    return {}

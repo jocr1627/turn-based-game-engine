@@ -3,17 +3,17 @@ from examples.dnd.actions.plan_turn import PlanTurn
 from examples.dnd.actions.take_turn import TakeTurn
 
 class Character(Entity):
-  def get_default_reactions(self, game):
+  def __init__(self, name, abilities={}):
+    state = { 'abilities': abilities, 'name': name }
+    super().__init__(state=state)
+
+  def get_default_children(self):
     return [
-      PlanTurn,
-      TakeTurn,
+      PlanTurn(),
+      TakeTurn(),
     ]
   
-  def get_default_state(self, game):
+  def get_default_state(self):
     return {
-      'actions': {},
-      'charisma': 0,
-      'initiative': 0,
-      'name': None,
-      'planned_actions': []
+      'planned_action_id': None
     }

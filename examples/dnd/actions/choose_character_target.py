@@ -1,20 +1,20 @@
 from engine.action import Action
-from examples.dnd.actions.character_action import CharacterAction
 
-class ChooseCharacterTarget(CharacterAction):
-  name = 'ChooseCharacterTarget'
+class ChooseCharacterTarget(Action):
+  def execute(self, diff):
+    characters = self.root.hydrate('character_ids')
+    character_names = [character.get('name') for character in characters]
+    target_id = None
 
-  def execute(self):
-    target_name = input(f'Enter a target: ').lower()
-    # assuming all children are characters (true so far)
-    target = None
-    for character in self.game.children.values():
-      if character.state.get('name').lower() == target_name:
-        target = character
+    while target_id is None:
+      target_name = input(f'Enter a target: ').lower()
 
-    action = self.options['action']
-    old_target = action.options['target'] if 'target' in action.options else None
-    action.options['target'] = target
+      for character in characters:
+        if character.get('name').lower() == target_name:
+          target_id = character.id
+      
+      if target_id is None:
+        print(f'{target_name} is not a known character. Options include: {character_names} Try again.')
 
-    # TODO: better key. Should actions get ids as well?
-    return { action.name: { 'target': (old_target, target) } }
+    action = self.hydrate('action_id')
+    action.set('target_id', target_id)

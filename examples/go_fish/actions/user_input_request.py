@@ -1,43 +1,49 @@
-from engine.action import Action
+from engine.listener import Listener
 from examples.go_fish.actions.request import Request
 
-class UserInputRequest(Action):
-  name = 'UserInputRequest'
+class UserInputRequest(Listener):
+  def execute(self, diff):
+    print(self.parent.get('hand'))
+    rank = None
 
-  def execute(self):
-    print(self.entity.state.get('hand'))
-    rank = int(input(f'What card should {self.entity.id} request? '))
-    players = self.game.get_players()
-    other_player_ids = [player.id for player in players if player.id != self.entity.id]
-    target = None
+    while rank is None:
+      try:
+        input_value = input(f'What card should {self.parent.id} request? ')
+        rank = int(input_value)
 
-    while target is None:
+        if rank < 0 or rank > 12:
+          rank = None
+          raise ValueError
+      except ValueError:
+        print(f'{input_value} is not a valid rank')
+
+    player_ids = self.root.get('player_ids')
+    other_player_ids = [player_id for player_id in player_ids if player_id != self.parent.id]
+    is_target_found = False
+
+    while not is_target_found:
       target_id = int(input(f'From which player? '))
 
-      if target_id == self.entity.id:
+      if target_id == self.parent.id:
         print(f'You cannot request a card from yourself. Options include: {other_player_ids} Try again.')
+      elif target_id not in other_player_ids:
+        print(f'No matches found for player {target_id}. Options include: {other_player_ids} Try again.')
       else:
-        target_matches = [player for player in players if player.id == target_id]
-
-        if len(target_matches) == 0:
-          print(f'No matches found for player {target_id}. Options include: {other_player_ids} Try again.')
-        else:
-          target = target_matches[0]
+        is_target_found = True
   
-    action = Request(self.game, self.entity, { 'rank': rank, 'request_class': self.__class__, 'target': target })
+    request_state = { 'rank': rank, 'request_class_name': self.get_name(), 'target_id': target_id }
+    action = Request(parent=self.parent, state=request_state)
     action.resolve()
-
-    return {}
 
   def get_is_valid(self):
     return (
-      self.entity.id is self.game.state.get('active_player')
-      and self.game.state.get('is_in_progress')
+      self.parent.id is self.root.get('active_player_id')
+      and self.root.get('is_in_progress')
     )
 
-  def get_should_react(self, trigger_action, is_preparation):
+  def get_should_react(self, trigger_action, diff, is_preparation):
     return (
       not is_preparation
-      and trigger_action.name is 'StartTurn'
-      and self.entity.id is self.game.state.get('active_player')
+      and trigger_action.get_name() is 'StartTurn'
+      and self.parent.id is self.root.get('active_player_id')
     )

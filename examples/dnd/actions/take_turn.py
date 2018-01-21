@@ -1,14 +1,20 @@
-from engine.action import Action
-from examples.dnd.actions.character_action import CharacterAction
+from engine.listener import Listener
 
-class TakeTurn(CharacterAction):
-  name = 'TakeTurn'
+class TakeTurn(Listener):
+  def execute(self, diff):
+    planned_action = self.parent.hydrate('planned_action_id')
+    planned_action.resolve()
+    
+  def get_is_valid(self):
+    return self.parent.hydrate('planned_action_id') is not None
 
-  def execute(self):
-    for action in self.entity.state.get('planned_actions'):
-      action.resolve()
+  def get_priority(self):
+    planned_action = self.parent.hydrate('planned_action_id')
 
-    return {}
+    return planned_action.get('initiative') if planned_action is not None else 0
 
-  def get_should_react(self, trigger_action, is_preparation):
-    return not is_preparation and trigger_action.name is 'StartRound'
+  def get_should_react(self, trigger_action, diff, is_preparation):
+    return (
+      not is_preparation
+      and trigger_action.get_name() is 'StartRound'
+    )

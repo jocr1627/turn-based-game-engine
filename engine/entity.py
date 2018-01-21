@@ -32,7 +32,7 @@ class Entity:
     self.state = State(raw_state)
   
   def __hydrate__(self, value):
-    if type(value) is list:
+    if type(value) is list or type(value) is set:
       hydrated_values = []
 
       for entity_id in value:
@@ -163,18 +163,18 @@ class Entity:
 
     return diff
 
-  def update(self, key, mutation):
+  def update(self, key, updater):
     original_value = self.state.get(key)
-    self.state.update(key, mutation)
+    self.state.update(key, updater)
     value = self.state.__get__(key)
     
     if len(self.root.diffs) > 0:
       diff = self.root.diffs[-1]
       diff.setIn(['state', self.id, key], (original_value, value))
   
-  def updateIn(self, keys, mutation):
+  def updateIn(self, keys, updater):
     original_value = self.state.getIn(keys)
-    self.state.updateIn(keys, mutation)
+    self.state.updateIn(keys, updater)
     value = self.state.__getIn__(keys)
     
     if len(self.root.diffs) > 0:

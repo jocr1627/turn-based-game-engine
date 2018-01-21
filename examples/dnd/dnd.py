@@ -11,10 +11,12 @@ entity_classes = {
 }
 
 class DnD(Game):
-  def __init__(self, characters):
-    character_ids = [character.id for character in characters]
-    state = { 'character_ids': character_ids }
-    super().__init__(children=characters, entity_classes=entity_classes, state=state)
+  def __init__(self, characters, locations):
+    children = [*characters, *locations]
+    character_ids = set([character.id for character in characters])
+    location_ids = set([location.id for location in locations])
+    state = { 'character_ids': character_ids, 'location_ids': location_ids }
+    super().__init__(children=children, entity_classes=entity_classes, state=state)
 
   def end_round(self):
     if self.get('round_number') == 2:

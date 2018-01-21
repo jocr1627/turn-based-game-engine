@@ -2,6 +2,7 @@ import cProfile
 import sys
 from examples.dnd.dnd import DnD
 from examples.dnd.entities.character import Character
+from examples.dnd.entities.location import Location
 from examples.go_fish.go_fish import GoFish
 from examples.go_fish.actions.draw_hand import DrawHand
 from examples.go_fish.actions.end_turn import EndTurn
@@ -50,35 +51,37 @@ def go_fish():
   print('Scores should add up to 13:', scores)
 
 def dnd():
-  character_states = [
-    {
-      'abilities': [
-        'PlanImpotentRage',
-        'PlanWhistle',
-      ],
-      'name': 'Nigel'
-    },
-    {
-      'abilities': [
-        'PlanImpotentRage',
-        'PlanWhistle',
-      ],
-      'name': 'John'
-    }
+  bar = Location('bar')
+  door = Location('door', [bar])
+  stairs = Location('stairs', [bar])
+  upstairs = Location('upstairs', [stairs])
+  locations = [
+    bar,
+    door,
+    stairs,
+    upstairs
   ]
-  characters = [Character(state=state) for state in character_states]
-  game = DnD(characters)
+  abilities = [
+    'PlanImpotentRage',
+    'PlanMove',
+    'PlanWhistle',
+  ]
+  characters = [
+    Character('Nigel', stairs, abilities),
+    Character('John', bar, abilities)
+  ]
+  game = DnD(characters, locations)
   game.run()
 
 game_name = sys.argv[1] if len(sys.argv) > 1 else None
 
 if game_name == 'dnd':
   if 'profile' in sys.argv:
-    cProfile.run('dnd()')
+    cProfile.run('dnd()', sort='cumtime')
   else:
     dnd()
 else:
   if 'profile' in sys.argv:
-    cProfile.run('go_fish()')
+    cProfile.run('go_fish()', sort='cumtime')
   else:
     go_fish()

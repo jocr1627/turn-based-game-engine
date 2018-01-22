@@ -7,3 +7,6 @@ class Move(Action):
     name = self.parent.get('name')
     target_location_name = target_location.get('name')
     print(f'{name} moved to {target_location_name}.')
+
+  def get_initiative(self):
+    return -1

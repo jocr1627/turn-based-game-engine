@@ -5,7 +5,7 @@ from examples.dnd.actions.flee import Flee
 
 class PlanFlee(Action):
   def execute(self, diff):
-    flee = Flee(parent=self.parent, state={ 'initiative': -2 })
+    flee = Flee(parent=self.parent)
     choose_character_target = ChooseCharacterTarget(parent=self, state={ 'action_id': flee.id })
     choose_character_target.resolve()
     choose_location_target = ChooseLocationTarget(parent=self, state={ 'action_id': flee.id })

@@ -1,3 +1,4 @@
+from engine.deep_merge import deep_merge
 from engine.diff import Diff
 from engine.state import State
 
@@ -24,11 +25,7 @@ class Entity:
     for child in children_list:
       self.add_child(child)
 
-    raw_state = self.get_default_state()
-
-    for key,value in state.items():
-      raw_state[key] = value
-
+    raw_state = deep_merge(self.get_default_state(), state)
     self.state = State(raw_state)
   
   def __hydrate__(self, value):

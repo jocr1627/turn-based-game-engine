@@ -3,10 +3,9 @@ from engine.listener import Listener
 
 text_to_abilities = {
   r'advance': 'PlanAdvance',
+  r'attack': 'PlanAttack',
   r'flee': 'PlanFlee',
-  r'(impotent)?\s*rage': 'PlanImpotentRage',
-  r'move': 'PlanMove',
-  r'whistle': 'PlanWhistle',
+  r'move': 'PlanMove'
 }
 
 class PlanTurn(Listener):

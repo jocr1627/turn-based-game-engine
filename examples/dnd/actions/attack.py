@@ -9,11 +9,12 @@ class Attack(Action):
     target_name = target.get('name')
     defend = Defend(parent=target, state={ 'attack_id': self.id })
     defend.resolve()
+    roll = self.get('roll')
     attack_score = self.get_score()
     defense_score = defend.get_score()
 
-    if attack_score > defense_score:
-      weapon = self.parent.hydrate('weapon_id')
+    if roll != 1 and (roll == 20 or attack_score > defense_score):
+      weapon = self.parent.get_weapon()
       damage = 0
       
       for sides,num in weapon.get('dice').items():
@@ -50,10 +51,14 @@ class Attack(Action):
   def get_score(self):
     score = self.get('roll')
     score += sum([modifier for modifier in self.get('attack_modifiers').values()])
-    weapon = self.parent.hydrate('weapon_id')
+    weapon = self.parent.get_weapon()
     weapon_attribute_caps = weapon.get('attribute_caps')
     attributes = self.parent.get('attributes')
-    score += sum([min(attributes[attr], cap) for attr,cap in weapon_attribute_caps.items()])
+
+    for attribute,cap in weapon_attribute_caps.items():
+      attribute_score = attributes[attribute]
+      score += min(attribute_score, cap) if cap is not None else attribute_score
+    
     score += sum([modifier for modifier in weapon.get('attack_modifiers').values()])
     targets_target_id = self.hydrate('target_id').hydrate('planned_action_id').get('target_id')
 

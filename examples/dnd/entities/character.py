@@ -1,6 +1,7 @@
 from engine.entity import Entity
 from examples.dnd.actions.plan_turn import PlanTurn
 from examples.dnd.actions.take_turn import TakeTurn
+from examples.dnd.entities.weapons.fists import Fists
 
 def get_max_hp(level, constitution, is_health_based):
   base_health = 20 if is_health_based else 10
@@ -14,17 +15,18 @@ class Character(Entity):
     abilities=[],
     armor=None,
     attributes={},
+    default_weapon=Fists(),
+    inventory=[],
     is_health_based=True,
     level=1,
     location=None,
     max_hp=None,
     weapon=None
   ):
-    children = []
-    
+    children = inventory + [default_weapon]
+
     if armor is not None:
       children.append(armor)
-  
     if weapon is not None:
       children.append(weapon)
 
@@ -36,7 +38,9 @@ class Character(Entity):
       'abilities': abilities,
       'armor_id': armor_id,
       'attributes': attributes,
+      'default_weapon_id': default_weapon.id,
       'hp': max_hp,
+      'inventory': [item.id for item in inventory],
       'level': level,
       'max_hp': max_hp,
       'name': name,
@@ -55,6 +59,7 @@ class Character(Entity):
       'abilities': [
         'PlanAdvance',
         'PlanAttack',
+        'PlanEquip',
         'PlanFlee',
         'PlanMove'
       ],
@@ -69,10 +74,15 @@ class Character(Entity):
         'strength': 0,
         'willpower': 0
       },
+      'default_weapon_id': None,
       'hp': 1,
+      'inventory': [],
       'level': 1,
       'max_hp': 1,
       'name': self.get_name(),
       'planned_action_id': None,
       'weapon_id': None
     }
+
+  def get_weapon(self):
+    return self.hydrate('weapon_id') if self.get('weapon_id') is not None else self.hydrate('default_weapon_id')

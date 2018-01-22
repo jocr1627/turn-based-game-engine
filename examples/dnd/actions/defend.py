@@ -24,7 +24,7 @@ class Defend(Action):
     score += sum([modifier for modifier in self.get('modifiers').values()])
     armor = self.parent.hydrate('armor_id')
     score += armor.get('bonus')
-    attack_type = self.hydrate('attack_id').parent.hydrate('weapon_id').get('attack_type')
+    attack_type = self.hydrate('attack_id').parent.get_weapon().get('attack_type')
     dexterity_cap = armor.get('dexterity_cap')
 
     if attack_type is 'physical':

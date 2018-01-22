@@ -4,6 +4,7 @@ from engine.listener import Listener
 text_to_abilities = {
   r'advance': 'PlanAdvance',
   r'attack': 'PlanAttack',
+  r'equip': 'PlanEquip',
   r'flee': 'PlanFlee',
   r'move': 'PlanMove'
 }
@@ -16,9 +17,11 @@ class PlanTurn(Listener):
 
     while action_class is None:
       action_name = input(f'Enter an action for player {name}: ').lower()
+      is_match_found = False
 
       for matcher in text_to_abilities:
         if re.match(matcher, action_name):
+          is_match_found = True
           action_class_name = text_to_abilities[matcher]
           
           if action_class_name in abilities:
@@ -28,7 +31,7 @@ class PlanTurn(Listener):
 
           break
       
-      if action_class is None:
+      if action_class is None and not is_match_found:
         print(f'{action_name} does match any known abilities. Options include: {text_to_abilities} Try again.')
 
     action = action_class(parent=self.parent)

@@ -4,12 +4,14 @@ from engine.entity import Entity
 from engine.game import Game
 from examples.dnd.actions.plan_advance import PlanAdvance
 from examples.dnd.actions.plan_attack import PlanAttack
+from examples.dnd.actions.plan_equip import PlanEquip
 from examples.dnd.actions.plan_flee import PlanFlee
 from examples.dnd.actions.plan_move import PlanMove
 
 entity_class_list = [
   PlanAdvance,
   PlanAttack,
+  PlanEquip,
   PlanFlee,
   PlanMove
 ]

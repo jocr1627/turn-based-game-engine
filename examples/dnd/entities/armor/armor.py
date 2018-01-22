@@ -5,7 +5,7 @@ class Armor(Entity):
     self,
     bonus,
     modifiers={},
-    dexterity_cap=0,
+    dexterity_cap=None,
     name=None,
     owner=None
   ):
@@ -23,7 +23,7 @@ class Armor(Entity):
   def get_default_state(self):
     return {
       'bonus': 0,
-      'dexterity_cap': 0,
+      'dexterity_cap': None,
       'modifiers': {},
       'name': self.get_name()
     }

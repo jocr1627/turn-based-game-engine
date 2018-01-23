@@ -23,8 +23,7 @@ class StartRound(Action):
     if hasattr(self.root, 'start_round'):
       self.root.start_round()
 
-    round_number = self.root.get('round_number')
-    self.root.set('round_number', round_number + 1)
+    self.root.update('round_number', lambda round_number: round_number + 1)
 
 class EndRound(Action):
   def execute(self, diff):

@@ -5,6 +5,5 @@ class DealDamage(Action):
     damage = self.get('damage')
     name = self.parent.get('name')
     hp = self.parent.get('hp')
-    hp = hp - damage if hp >= damage else 0
-    self.parent.set('hp', hp)
+    self.parent.update('hp', lambda hp: hp - damage if hp >= damage else 0)
     print(f'{name} took {damage} points of damage.')

@@ -3,7 +3,7 @@ from engine.action import Action
 class Discard(Action):
   def execute(self, diff):
     card = self.get('card')
-    self.parent.update('hand', lambda hand: hand.remove(card))
+    self.parent.mutate('hand', lambda hand: hand.remove(card))
 
   def get_is_valid(self):
     card = self.get('card')

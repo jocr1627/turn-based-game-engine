@@ -23,8 +23,7 @@ class Score(Listener):
       discard = Discard(parent=self.parent, state={ 'card': card_to_remove })
       discard.resolve()
     
-    score = self.parent.get('score')
-    self.parent.set('score', score + 1)
+    self.parent.update('score', lambda score: score + 1)
 
   def get_is_valid(self):
     hand = self.parent.get('hand')

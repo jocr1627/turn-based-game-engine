@@ -3,10 +3,11 @@ from engine.game import Game
 from examples.go_fish.actions.max_value_request import MaxValueRequest
 from examples.go_fish.actions.user_input_request import UserInputRequest
 
-entity_classes = {
-  MaxValueRequest.get_name(): MaxValueRequest,
-  UserInputRequest.get_name(): UserInputRequest
-}
+entity_class_list = [
+  MaxValueRequest,
+  UserInputRequest
+]
+entity_classes = { clazz.get_name(): clazz for clazz in entity_class_list }
 
 class GoFish(Game):
   def __init__(self, players):

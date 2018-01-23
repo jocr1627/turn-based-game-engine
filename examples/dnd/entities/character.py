@@ -3,9 +3,9 @@ from examples.dnd.actions.plan_turn import PlanTurn
 from examples.dnd.actions.take_turn import TakeTurn
 
 class Character(Entity):
-  def __init__(self, name, abilities={}):
+  def __init__(self, name, location, abilities={}):
     state = { 'abilities': abilities, 'name': name }
-    super().__init__(state=state)
+    super().__init__(parent=location, state=state)
 
   def get_default_children(self):
     return [

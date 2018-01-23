@@ -62,6 +62,8 @@ def dnd():
     upstairs
   ]
   abilities = [
+    'PlanAdvance',
+    'PlanFlee',
     'PlanImpotentRage',
     'PlanMove',
     'PlanWhistle',

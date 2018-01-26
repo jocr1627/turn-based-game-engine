@@ -11,9 +11,10 @@ class Attack(Action):
     defend.resolve()
     roll = self.get('roll')
     attack_score = self.get_score()
+    defense_roll = defend.get('roll')
     defense_score = defend.get_score()
 
-    if roll != 1 and (roll == 20 or attack_score > defense_score):
+    if defense_roll != 20 and roll != 1 and (roll == 20 or attack_score > defense_score):
       weapon = self.parent.get_weapon()
       damage = 0
       
@@ -60,7 +61,6 @@ class Attack(Action):
       score += min(attribute_score, cap) if cap is not None else attribute_score
     
     score += sum([modifier for modifier in weapon.get('attack_modifiers').values()])
-    targets_target_id = self.hydrate('target_id').hydrate('planned_action_id').get('target_id')
 
     if self.get_is_flanking():
       score += 2

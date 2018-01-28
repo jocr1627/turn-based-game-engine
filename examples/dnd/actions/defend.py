@@ -28,7 +28,7 @@ class Defend(Action):
     dexterity_cap = armor.get('dexterity_cap')
 
     if attack_type is 'physical':
-      score += min(self.parent.getIn(['attributes', 'dexterity']), dexterity_cap)
+      score += min(self.parent.get_in(['attributes', 'dexterity']), dexterity_cap)
     
     score += sum([modifier for modifier in armor.get('modifiers').values()])
   

@@ -69,7 +69,7 @@ class Entity:
       child.listeners = {}
 
       if len(self.root.diffs) > 0:
-        diff.setIn(['children', self.id, child.id], (None, child))
+        diff.set_in(['children', self.id, child.id], (None, child))
   
   def end_diff(self):
     return self.diffs.pop()
@@ -77,8 +77,8 @@ class Entity:
   def get(self, key):
     return self.state.get(key)
   
-  def getIn(self, keys):
-    return self.state.getIn(keys)
+  def get_in(self, keys):
+    return self.state.get_in(keys)
 
   def get_default_children(self):
     return []
@@ -100,20 +100,20 @@ class Entity:
   def has(self, key):
     return self.state.has(key)
   
-  def hasIn(self, keys):
-    return self.state.hasIn(keys)
+  def has_in(self, keys):
+    return self.state.has_in(keys)
   
   def hydrate(self, key):
     return self.__hydrate__(self.get(key))
   
   def hydrateIn(self, keys):
-    return self.__hydrate__(self.getIn(keys))
+    return self.__hydrate__(self.get_in(keys))
 
   def inspect(self, key, getter):
     return self.state.inspect(key, getter)
   
-  def inspectIn(self, keys, getter):
-    return self.state.inspectIn(keys, getter)
+  def inspect_in(self, keys, getter):
+    return self.state.inspect_in(keys, getter)
 
   def remove_child(self, child, diff=Diff()):
     if child.id in self.children:
@@ -136,7 +136,7 @@ class Entity:
           child.listeners[descendant.id] = descendant
 
       if len(self.root.diffs) > 0:
-        diff.setIn(['children', self.id, child.id], (child, None))
+        diff.set_in(['children', self.id, child.id], (child, None))
   
   def set(self, key, value):
     original_value = self.state.get(key)
@@ -144,15 +144,15 @@ class Entity:
     
     if len(self.root.diffs) > 0:
       diff = self.root.diffs[-1]
-      diff.setIn(['state', self.id, key], (original_value, value))
+      diff.set_in(['state', self.id, key], (original_value, value))
   
-  def setIn(self, keys, value):
-    original_value = self.state.getIn(keys)
-    self.state.setIn(keys, value)
+  def set_in(self, keys, value):
+    original_value = self.state.get_in(keys)
+    self.state.set_in(keys, value)
     
     if len(self.root.diffs) > 0:
       diff = self.root.diffs[-1]
-      diff.setIn(['state', self.id, *keys], (original_value, value))
+      diff.set_in(['state', self.id, *keys], (original_value, value))
   
   def start_diff(self):
     diff = Diff()
@@ -167,13 +167,13 @@ class Entity:
     
     if len(self.root.diffs) > 0:
       diff = self.root.diffs[-1]
-      diff.setIn(['state', self.id, key], (original_value, value))
+      diff.set_in(['state', self.id, key], (original_value, value))
   
-  def updateIn(self, keys, updater):
-    original_value = self.state.getIn(keys)
-    self.state.updateIn(keys, updater)
-    value = self.state.__getIn__(keys)
+  def update_in(self, keys, updater):
+    original_value = self.state.get_in(keys)
+    self.state.update_in(keys, updater)
+    value = self.state.__get_in__(keys)
     
     if len(self.root.diffs) > 0:
       diff = self.root.diffs[-1]
-      diff.setIn(['state', self.id, *keys], (original_value, value))
+      diff.set_in(['state', self.id, *keys], (original_value, value))

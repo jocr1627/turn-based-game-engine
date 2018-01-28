@@ -10,7 +10,7 @@ class State:
   def __get__(self, key):
     return self.raw_state[key] if key in self.raw_state else None
   
-  def __getIn__(self, keys):
+  def __get_in__(self, keys):
     state_slice = self.raw_state
 
     for key in keys:
@@ -26,13 +26,13 @@ class State:
   def get(self, key):
     return deepcopy(self.__get__(key))
   
-  def getIn(self, keys):
-    return deepcopy(self.__getIn__(keys)) 
+  def get_in(self, keys):
+    return deepcopy(self.__get_in__(keys)) 
 
   def has(self, key):
     return self.__contains__(key)
 
-  def hasIn(self, keys):
+  def has_in(self, keys):
     state_slice = self.raw_state
 
     for key in keys:
@@ -48,15 +48,15 @@ class State:
 
     return getter(state_slice)
   
-  def inspectIn(self, keys, getter):
-    state_slice = self.__getIn__(keys)
+  def inspect_in(self, keys, getter):
+    state_slice = self.__get_in__(keys)
 
     return getter(state_slice)
 
   def set(self, key, value):
     self.raw_state[key] = value
   
-  def setIn(self, keys, value):
+  def set_in(self, keys, value):
     if len(keys) == 0:
       return
 
@@ -74,6 +74,6 @@ class State:
     state_slice = self.__get__(key)
     updater(state_slice)
   
-  def updateIn(self, keys, updater):
-    state_slice = self.__getIn__(keys)
+  def update_in(self, keys, updater):
+    state_slice = self.__get_in__(keys)
     updater(state_slice)

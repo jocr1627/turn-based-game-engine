@@ -16,7 +16,7 @@ class DrawHand(Listener):
   def get_should_react(self, trigger_action, diff, is_preparation):
     return (
       (not is_preparation and trigger_action.get_name() is 'StartGame')
-      or diff.inspectIn(
+      or diff.inspect_in(
         ['state', self.parent.id, 'hand'],
         lambda hand_diff: hand_diff is not None and len(hand_diff[1]) == 0
       )

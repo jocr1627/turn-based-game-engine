@@ -5,10 +5,11 @@ from engine.state import State
 class Entity:
   next_entity_id = 0
 
-  def __init__(self, children=[], entity_classes={}, parent=None, state={}):
+  def __init__(self, children=[], entity_classes={}, getters={}, parent=None, state={}):
     self.descendants = {}
     self.diffs = []
     self.entity_classes = entity_classes
+    self.getters = gettters
     self.listeners = {}
     self.parent = None
     self.root = self
@@ -66,6 +67,9 @@ class Entity:
 
   def get_default_children(self):
     return []
+  
+  def get_default_getters(self):
+    return {}
 
   def get_default_state(self):
     return {}
@@ -155,7 +159,13 @@ class Entity:
 
       if len(self.root.diffs) > 0:
         diff.set_in(['children', self.id, child.id], (child, None))
-  
+
+  def request(self, key, args={}):
+    request = Request(parent=self, state={ 'args': args, 'key': key })
+    request.resolve()
+
+    return request.get(key)
+
   def set(self, key, value):
     original_value = self.state.get(key)
     self.state.set(key, value)

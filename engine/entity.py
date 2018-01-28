@@ -28,22 +28,6 @@ class Entity:
     raw_state = deep_merge(self.get_default_state(), state)
     self.state = State(raw_state)
   
-  def __hydrate__(self, value):
-    if type(value) is list or type(value) is set:
-      hydrated_values = []
-
-      for entity_id in value:
-        entity = None
-
-        if entity_id in self.root.descendants:
-          entity = self.root.descendants[entity_id]
-        
-        hydrated_values.append(entity)
-      
-      return hydrated_values
-    elif value in self.root.descendants:
-      return self.root.descendants[value]
-
   def add_child(self, child, diff=Diff()):
     if child.id not in self.children:
       if child.parent is not None:
@@ -104,10 +88,26 @@ class Entity:
     return self.state.has_in(keys)
   
   def hydrate(self, key):
-    return self.__hydrate__(self.get(key))
-  
-  def hydrateIn(self, keys):
-    return self.__hydrate__(self.get_in(keys))
+    return self.hydrate_by_id(self.get(key))
+
+  def hydrate_by_id(self, id_or_ids):
+    if type(id_or_ids) is list or type(id_or_ids) is set:
+      hydrated_values = []
+
+      for entity_id in id_or_ids:
+        entity = None
+
+        if entity_id in self.root.descendants:
+          entity = self.root.descendants[entity_id]
+        
+        hydrated_values.append(entity)
+      
+      return hydrated_values
+    elif id_or_ids in self.root.descendants:
+      return self.root.descendants[id_or_ids]
+
+  def hydrate_in(self, keys):
+    return self.hydrate_by_id(self.get_in(keys))
 
   def inspect(self, key, getter):
     return self.state.inspect(key, getter)

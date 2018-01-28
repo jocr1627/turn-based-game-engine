@@ -115,6 +115,24 @@ class Entity:
   def inspect_in(self, keys, getter):
     return self.state.inspect_in(keys, getter)
 
+  def mutate(self, key, mutater):
+    original_value = self.state.get(key)
+    self.state.mutate(key, mutater)
+    value = self.state.__get__(key)
+    
+    if len(self.root.diffs) > 0:
+      diff = self.root.diffs[-1]
+      diff.set_in(['state', self.id, key], (original_value, value))
+  
+  def mutate_in(self, keys, mutater):
+    original_value = self.state.get_in(keys)
+    self.state.mutate_in(keys, mutater)
+    value = self.state.__get_in__(keys)
+    
+    if len(self.root.diffs) > 0:
+      diff = self.root.diffs[-1]
+      diff.set_in(['state', self.id, *keys], (original_value, value))
+
   def remove_child(self, child, diff=Diff()):
     if child.id in self.children:
       child.parent = None

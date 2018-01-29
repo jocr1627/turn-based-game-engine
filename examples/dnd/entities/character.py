@@ -1,6 +1,7 @@
 from engine.entity import Entity
 from examples.dnd.actions.plan_attack import PlanAttack
 from examples.dnd.actions.plan_turn import PlanTurn
+from examples.dnd.actions.set_target_character import SetTargetCharacter
 from examples.dnd.actions.take_turn import TakeTurn
 from examples.dnd.entities.weapons.fists import Fists
 from examples.dnd.utils.roll import roll
@@ -53,6 +54,7 @@ class Character(Entity):
   def get_default_children(self):
     return [
       PlanTurn(),
+      SetTargetCharacter(),
       TakeTurn(),
     ]
   
@@ -61,6 +63,7 @@ class Character(Entity):
       'plan_action_class_name': self.get_plan_action_class_name,
       'roll': self.get_roll,
       'target_character_ids': self.get_target_character_ids,
+      'target_location_ids': self.get_target_character_ids,
     }
   
   def get_default_state(self):
@@ -90,6 +93,7 @@ class Character(Entity):
       'max_hp': 1,
       'name': self.get_name(),
       'planned_action_id': None,
+      'target_character_id': None,
       'weapon_id': None
     }
   

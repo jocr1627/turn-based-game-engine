@@ -15,7 +15,8 @@ class Attack(Action):
     defense_score = defend.get_score()
 
     if defense_roll != 20 and roll != 1 and (roll == 20 or attack_score > defense_score):
-      damage = self.parent.request('weapon_damage', args={ 'action_id': self.id, 'roll': roll })
+      is_critical = self.parent.request('is_critical', args={ 'roll': roll })
+      damage = self.parent.request('weapon_damage', args={ 'action_id': self.id, 'is_critical': is_critical })
       deal_damage = DealDamage(parent=target_character, state={ 'damage': damage })
       deal_damage.resolve()
     else:

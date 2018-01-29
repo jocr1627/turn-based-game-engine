@@ -62,7 +62,7 @@ class Character(Entity):
   
   def get_default_getters(self):
     return {
-      'is_critical_hit': self.get_is_critical_hit,
+      'is_critical': self.get_is_critical,
       'is_flanking': self.get_is_flanking,
       'plan_action_class_name': self.get_plan_action_class_name,
       'roll': self.get_roll,
@@ -103,7 +103,7 @@ class Character(Entity):
       'weapon_id': None
     }
   
-  def get_is_critical_hit(self, args):
+  def get_is_critical(self, args):
     critical_chance = self.get('critical_chance')
     roll = args['roll']
 
@@ -140,7 +140,7 @@ class Character(Entity):
     args['roll_type'] = 'damage'
     damage = self.get_roll(args) + damage_modifier
 
-    if self.request('is_critical_hit', args):
+    if args['is_critical']
       damage *= 2
 
     return damage

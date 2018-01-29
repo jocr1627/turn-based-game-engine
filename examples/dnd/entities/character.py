@@ -35,12 +35,14 @@ class Character(Entity):
 
     armor_id = armor.id if armor is not None else None
     constitution = attributes['constitution'] if 'constitution' in attributes else 0
+    guile = attributes['guile'] if 'guile' in attributes else 0
     max_hp = max_hp if max_hp is not None else get_max_hp(level, constitution, is_health_based)
     weapon_id = weapon.id if weapon is not None else None
     state = {
       'abilities': abilities,
       'armor_id': armor_id,
       'attributes': attributes,
+      'critical_chance': min(0.05 * (1 + guile), 1),
       'default_weapon_id': default_weapon.id,
       'hp': max_hp,
       'inventory': [item.id for item in inventory],
@@ -60,6 +62,7 @@ class Character(Entity):
   
   def get_default_getters(self):
     return {
+      'is_critical_hit': self.get_is_critical_hit,
       'plan_action_class_name': self.get_plan_action_class_name,
       'roll': self.get_roll,
       'target_character_ids': self.get_target_character_ids,
@@ -87,6 +90,7 @@ class Character(Entity):
         'strength': 0,
         'willpower': 0
       },
+      'critical_chance': 0.05,
       'default_weapon_id': None,
       'hp': 1,
       'inventory': [],
@@ -97,6 +101,12 @@ class Character(Entity):
       'target_character_id': None,
       'weapon_id': None
     }
+  
+  def get_is_critical_hit(self, args):
+    critical_chance = self.get('critical_chance')
+    roll = args['roll']
+
+    return round(1 - roll / 20, 2) < critical_chance
   
   def get_plan_action_class_name(self, args):
     return 'PlanAttack'
@@ -120,5 +130,9 @@ class Character(Entity):
     damage_modifier = weapon.get('damage_modifier')
     args['dice'] = weapon.get('dice')
     args['roll_type'] = 'damage'
+    damage = self.get_roll(args) + damage_modifier
 
-    return self.get_roll(args) + damage_modifier
+    if self.request('is_critical_hit', args):
+      damage *= 2
+
+    return damage

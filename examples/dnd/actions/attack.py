@@ -5,9 +5,9 @@ from examples.dnd.actions.defend import Defend
 class Attack(Action):
   def execute(self, diff):
     name = self.parent.get('name')
-    target = self.hydrate('target_id')
-    target_name = target.get('name')
-    defend = Defend(parent=target, state={ 'attack_id': self.id })
+    target_character = self.hydrate('target_character_id')
+    target_character_name = target_character.get('name')
+    defend = Defend(parent=target_character, state={ 'attack_id': self.id })
     defend.resolve()
     roll = self.get('roll')
     attack_score = self.get_score()
@@ -33,21 +33,21 @@ class Attack(Action):
           damage += roll
 
       damage += sum([modifier for modifier in weapon.get('damage_modifiers').values()])
-      deal_damage = DealDamage(parent=target, state={ 'damage': damage })
+      deal_damage = DealDamage(parent=target_character, state={ 'damage': damage })
       deal_damage.resolve()
     else:
-      print(f'{target_name} successfully defended against {name}\'s Attack.')
+      print(f'{target_character_name} successfully defended against {name}\'s Attack.')
 
   def get_default_state(self):
-    return { 'attack_modifiers': {}, 'damage_modifiers': {}, 'roll': 0, 'target_id': None }
+    return { 'attack_modifiers': {}, 'damage_modifiers': {}, 'roll': 0, 'target_character_id': None }
 
   def get_initiative(self):
     return self.get_score()
   
   def get_is_flanking(self):
-    targets_target_id = self.hydrate('target_id').hydrate('planned_action_id').get('target_id')
+    targets_target_character_id = self.hydrate('target_character_id').hydrate('planned_action_id').get('target_character_id')
 
-    return targets_target_id is not self.parent.id
+    return targets_target_character_id is not self.parent.id
 
   def get_score(self):
     score = self.get('roll')

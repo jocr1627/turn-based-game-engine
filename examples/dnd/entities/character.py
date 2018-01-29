@@ -60,6 +60,7 @@ class Character(Entity):
     return {
       'plan_action_class_name': self.get_plan_action_class_name,
       'roll': self.get_roll,
+      'target_character_ids': self.get_target_character_ids,
     }
   
   def get_default_state(self):
@@ -97,6 +98,9 @@ class Character(Entity):
 
   def get_roll(self, args):
     return roll()
+
+  def get_target_character_ids(self, args):
+    return args['valid_ids'][0:args['num_targets']]
 
   def get_weapon(self):
     return self.hydrate('weapon_id') if self.get('weapon_id') is not None else self.hydrate('default_weapon_id')

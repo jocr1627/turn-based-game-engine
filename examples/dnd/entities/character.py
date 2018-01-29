@@ -63,7 +63,7 @@ class Character(Entity):
       'plan_action_class_name': self.get_plan_action_class_name,
       'roll': self.get_roll,
       'target_character_ids': self.get_target_character_ids,
-      'target_location_ids': self.get_target_character_ids,
+      'target_location_ids': self.get_target_location_ids,
     }
   
   def get_default_state(self):
@@ -104,6 +104,9 @@ class Character(Entity):
     return roll()
 
   def get_target_character_ids(self, args):
+    return args['valid_ids'][0:args['num_targets']]
+
+  def get_target_location_ids(self, args):
     return args['valid_ids'][0:args['num_targets']]
 
   def get_weapon(self):

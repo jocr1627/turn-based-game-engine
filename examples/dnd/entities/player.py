@@ -52,28 +52,34 @@ class Player(Character):
     return roll
 
   def get_target_character_ids(self, args):
+    return self.get_target_ids('character', args)
+  
+  def get_target_ids(self, target_type, args):
     action_id = args['action_id']
     action = self.hydrate_by_id(action_id)
     action_name = action.get_name()
     num_targets = args['num_targets']
     valid_ids = args['valid_ids']
-    valid_characters = [self.hydrate_by_id(character_id) for character_id in valid_ids]
-    valid_character_ids_by_name = { character.get('name').lower(): character.id for character in valid_characters }
+    valid_targets = [self.hydrate_by_id(target_id) for target_id in valid_ids]
+    valid_target_ids_by_name = { target.get('name').lower(): target.id for target in valid_targets }
     name = self.get('name')
-    target_character_ids = []
+    target_ids = []
 
     for i in range(num_targets):
-      target_character_id = None
+      target_id = None
 
-      while target_character_id is None:
-        target_character_name = input(f'Enter a target character for {name}\'s {action_name}: ').lower()
+      while target_id is None:
+        target_name = input(f'Enter a target {target_type} for {name}\'s {action_name}: ').lower()
 
-        if target_character_name in valid_character_ids_by_name:
-          target_character_id = valid_character_ids_by_name[target_character_name]
+        if target_name in valid_target_ids_by_name:
+          target_id = valid_target_ids_by_name[target_name]
         elif targ
         else:
-          print(f'{target_character_name} is not a valid target character. Options include: {list(valid_character_ids_by_name.keys())} Try again.')
+          print(f'{target_name} is not a valid target {target_type}. Options include: {list(valid_target_ids_by_name.keys())} Try again.')
       
-      target_character_ids.append(target_character_id)
+      target_ids.append(target_id)
 
-    return target_character_ids
+    return target_ids
+
+  def get_target_location_ids(self, args):
+    return self.get_target_ids('location', args)

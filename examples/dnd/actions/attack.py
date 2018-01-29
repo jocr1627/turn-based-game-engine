@@ -15,24 +15,7 @@ class Attack(Action):
     defense_score = defend.get_score()
 
     if defense_roll != 20 and roll != 1 and (roll == 20 or attack_score > defense_score):
-      weapon = self.parent.get_weapon()
-      damage = 0
-      
-      for sides,num in weapon.get('dice').items():
-        for i in range(num):
-          roll = None
-
-          while roll is None:
-            raw_roll = input(f'Enter {name}\'s d{sides} roll: ')
-
-            try:
-              roll = int(raw_roll)
-            except ValueError:
-              print(f'{raw_roll} is not a valid roll.')
-          
-          damage += roll
-
-      damage += sum([modifier for modifier in weapon.get('damage_modifiers').values()])
+      damage = self.parent.request('weapon_damage', args={ 'action_id': self.id, 'roll': roll })
       deal_damage = DealDamage(parent=target_character, state={ 'damage': damage })
       deal_damage.resolve()
     else:

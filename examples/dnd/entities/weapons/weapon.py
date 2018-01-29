@@ -4,18 +4,18 @@ class Weapon(Entity):
   def __init__(
     self,
     dice,
-    attack_modifiers={},
+    attack_modifier=0,
     attack_type='physical',
     attribute_caps={},
-    damage_modifiers={},
+    damage_modifier=0,
     name=None,
     owner=None
   ):
     state = {
-      'attack_modifiers': attack_modifiers,
+      'attack_modifier': attack_modifier,
       'attack_type': attack_type,
       'attribute_caps': attribute_caps,
-      'damage_modifiers': damage_modifiers,
+      'damage_modifier': damage_modifier,
       'dice': dice
     }
 
@@ -26,10 +26,10 @@ class Weapon(Entity):
   
   def get_default_state(self):
     return {
-      'attack_modifiers': {},
+      'attack_modifier': 0,
       'attack_type': 'physical',
       'attribute_caps': {},
-      'damage_modifiers': {},
+      'damage_modifier': 0,
       'dice': {},
       'name': self.get_name()
     }

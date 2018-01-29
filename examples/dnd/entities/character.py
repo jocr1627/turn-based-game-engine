@@ -64,6 +64,7 @@ class Character(Entity):
       'roll': self.get_roll,
       'target_character_ids': self.get_target_character_ids,
       'target_location_ids': self.get_target_location_ids,
+      'weapon_damage': self.get_weapon_damage
     }
   
   def get_default_state(self):
@@ -101,7 +102,9 @@ class Character(Entity):
     return 'PlanAttack'
 
   def get_roll(self, args):
-    return roll()
+    dice = args['dice'] if dice in 'args' else None
+  
+    return roll(dice)
 
   def get_target_character_ids(self, args):
     return args['valid_ids'][0:args['num_targets']]
@@ -111,3 +114,11 @@ class Character(Entity):
 
   def get_weapon(self):
     return self.hydrate('weapon_id') if self.get('weapon_id') is not None else self.hydrate('default_weapon_id')
+
+  def get_weapon_damage(self, args):
+    weapon = self.get_weapon()
+    damage_modifier = weapon.get('damage_modifier')
+    args['dice'] = weapon.get('dice')
+    args['roll_type'] = 'damage'
+
+    return self.get_roll(args) + damage_modifier

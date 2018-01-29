@@ -1,4 +1,5 @@
 from engine.entity import Entity
+from examples.dnd.actions.plan_attack import PlanAttack
 from examples.dnd.actions.plan_turn import PlanTurn
 from examples.dnd.actions.take_turn import TakeTurn
 from examples.dnd.entities.weapons.fists import Fists
@@ -57,6 +58,7 @@ class Character(Entity):
   
   def get_default_getters(self):
     return {
+      'plan_action_class_name': self.get_plan_action_class_name,
       'roll': self.get_roll,
     }
   
@@ -89,6 +91,9 @@ class Character(Entity):
       'planned_action_id': None,
       'weapon_id': None
     }
+  
+  def get_plan_action_class_name(self, args):
+    return 'PlanAttack'
 
   def get_roll(self, args):
     return roll()

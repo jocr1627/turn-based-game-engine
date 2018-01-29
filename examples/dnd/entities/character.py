@@ -65,10 +65,11 @@ class Character(Entity):
       'is_critical': self.get_is_critical,
       'is_flanking': self.get_is_flanking,
       'plan_action_class_name': self.get_plan_action_class_name,
+      'physical_defense_modifier': self.get_physical_defense_modifier,
       'roll': self.get_roll,
       'target_character_ids': self.get_target_character_ids,
       'target_location_ids': self.get_target_location_ids,
-      'weapon_attack_bonus': self.get_weapon_attack_bonus,
+      'weapon_attack_modifier': self.get_weapon_attack_modifier,
       'weapon_damage': self.get_weapon_damage
     }
   
@@ -120,6 +121,13 @@ class Character(Entity):
   def get_plan_action_class_name(self, args):
     return 'PlanAttack'
 
+  def get_physical_defense_modifier(self, args):
+    armor = self.hydrate('armor_id')
+    dexterity_cap = armor.get('dexterity_cap')
+    dexterity = self.get_in(['attributes', 'dexterity'])
+    
+    return armor.get('modifier') + min(dexterity, dexterity_cap)
+
   def get_roll(self, args):
     dice = args['dice'] if dice in 'args' else None
   
@@ -134,17 +142,17 @@ class Character(Entity):
   def get_weapon(self):
     return self.hydrate('weapon_id') if self.get('weapon_id') is not None else self.hydrate('default_weapon_id')
 
-  def get_weapon_attack_bonus(self, args):
+  def get_weapon_attack_modifier(self, args):
     weapon = self.get_weapon()
     weapon_attribute_caps = weapon.get('attribute_caps')
     attributes = self.get('attributes')
-    weapon_attack_bonus = weapon.get('attack_modifier')
+    weapon_attack_modifier = weapon.get('attack_modifier')
 
     for attribute,cap in weapon_attribute_caps.items():
       attribute_score = attributes[attribute]
-      weapon_attack_bonus += min(attribute_score, cap) if cap is not None else attribute_score
+      weapon_attack_modifier += min(attribute_score, cap) if cap is not None else attribute_score
 
-    return weapon_attack_bonus
+    return weapon_attack_modifier
 
   def get_weapon_damage(self, args):
     weapon = self.get_weapon()

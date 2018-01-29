@@ -12,7 +12,7 @@ class Attack(Action):
     roll = self.get('roll')
     attack_score = self.get_score()
     defense_roll = defend.get('roll')
-    defense_score = defend.get_score()
+    defense_score = defend.get('score')
 
     if defense_roll != 20 and roll != 1 and (roll == 20 or attack_score > defense_score):
       is_critical = self.parent.request('is_critical', args={ 'roll': roll })

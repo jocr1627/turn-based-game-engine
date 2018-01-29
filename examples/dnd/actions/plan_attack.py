@@ -12,9 +12,9 @@ class PlanAttack(Action):
     attack.set('target_character_id', target_character_id)
     roll = self.parent.request('roll', args={ 'action_id': attack.id })
     attack.set('roll', roll)
-    weapon_attack_bonus = self.parent.request('weapon_attack_bonus')
+    weapon_attack_modifier = self.parent.request('weapon_attack_modifier')
     is_flanking = self.parent.request('is_flanking', args={ 'target_character_id' })
-    score = roll + weapon_attack_bonus
+    score = roll + weapon_attack_modifier
 
     if is_flanking:
       score += 2

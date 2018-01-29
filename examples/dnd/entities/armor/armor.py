@@ -3,16 +3,14 @@ from engine.entity import Entity
 class Armor(Entity):
   def __init__(
     self,
-    bonus,
-    modifiers={},
+    modifier,
     dexterity_cap=None,
     name=None,
     owner=None
   ):
     state = {
-      'bonus': bonus,
-      'dexterity_cap': dexterity_cap,
-      'modifiers': modifiers
+      'modifier': modifier,
+      'dexterity_cap': dexterity_cap
     }
 
     if name is not None:
@@ -22,8 +20,7 @@ class Armor(Entity):
   
   def get_default_state(self):
     return {
-      'bonus': 0,
+      'modifier': 0,
       'dexterity_cap': None,
-      'modifiers': {},
       'name': self.get_name()
     }

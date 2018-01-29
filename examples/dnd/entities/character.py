@@ -68,6 +68,7 @@ class Character(Entity):
       'roll': self.get_roll,
       'target_character_ids': self.get_target_character_ids,
       'target_location_ids': self.get_target_location_ids,
+      'weapon_attack_bonus': self.get_weapon_attack_bonus,
       'weapon_damage': self.get_weapon_damage
     }
   
@@ -132,6 +133,18 @@ class Character(Entity):
 
   def get_weapon(self):
     return self.hydrate('weapon_id') if self.get('weapon_id') is not None else self.hydrate('default_weapon_id')
+
+  def get_weapon_attack_bonus(self, args):
+    weapon = self.get_weapon()
+    weapon_attribute_caps = weapon.get('attribute_caps')
+    attributes = self.get('attributes')
+    weapon_attack_bonus = weapon.get('attack_modifier')
+
+    for attribute,cap in weapon_attribute_caps.items():
+      attribute_score = attributes[attribute]
+      weapon_attack_bonus += min(attribute_score, cap) if cap is not None else attribute_score
+
+    return weapon_attack_bonus
 
   def get_weapon_damage(self, args):
     weapon = self.get_weapon()

@@ -3,17 +3,7 @@ from examples.dnd.actions.deal_damage import DealDamage
 
 class Defend(Action):
   def execute(self, diff):
-    name = self.parent.get('name')
-    roll = None
-
-    while roll is None:
-      raw_roll = input(f'Enter {name}\'s roll for Defend: ')
-
-      try:
-        roll = int(raw_roll)
-      except ValueError:
-        print(f'{raw_roll} is not a valid roll.')
-
+    roll = self.parent.request('roll', args={ 'action_id': self.id })
     self.set('roll', roll)
 
   def get_default_state(self):

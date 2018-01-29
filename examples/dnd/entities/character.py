@@ -2,6 +2,7 @@ from engine.entity import Entity
 from examples.dnd.actions.plan_turn import PlanTurn
 from examples.dnd.actions.take_turn import TakeTurn
 from examples.dnd.entities.weapons.fists import Fists
+from examples.dnd.utils.roll import roll
 
 def get_max_hp(level, constitution, is_health_based):
   base_health = 20 if is_health_based else 10
@@ -54,6 +55,11 @@ class Character(Entity):
       TakeTurn(),
     ]
   
+  def get_default_getters(self):
+    return {
+      'roll': self.get_roll,
+    }
+  
   def get_default_state(self):
     return {
       'abilities': [
@@ -83,6 +89,9 @@ class Character(Entity):
       'planned_action_id': None,
       'weapon_id': None
     }
+
+  def get_roll(self, args):
+    return roll()
 
   def get_weapon(self):
     return self.hydrate('weapon_id') if self.get('weapon_id') is not None else self.hydrate('default_weapon_id')

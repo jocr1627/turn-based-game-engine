@@ -63,6 +63,7 @@ class Character(Entity):
   def get_default_getters(self):
     return {
       'is_critical_hit': self.get_is_critical_hit,
+      'is_flanking': self.get_is_flanking,
       'plan_action_class_name': self.get_plan_action_class_name,
       'roll': self.get_roll,
       'target_character_ids': self.get_target_character_ids,
@@ -107,6 +108,13 @@ class Character(Entity):
     roll = args['roll']
 
     return round(1 - roll / 20, 2) < critical_chance
+  
+  def get_is_flanking(self, args):
+    target_character_id = args['target_character_id']
+    target_character = self.hydrate_by_id(target_character_id)
+    target_id_of_target = target_character.get('target_character_id')
+
+    return target_id_of_target is not self.id
   
   def get_plan_action_class_name(self, args):
     return 'PlanAttack'

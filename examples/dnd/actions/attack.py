@@ -28,9 +28,9 @@ class Attack(Action):
     return self.get_score()
   
   def get_is_flanking(self):
-    targets_target_character_id = self.hydrate('target_character_id').hydrate('planned_action_id').get('target_character_id')
+    target_character_id = self.get('target_character_id')
 
-    return targets_target_character_id is not self.parent.id
+    return self.parent.request('is_flanking', args={ 'target_character_id': target_character_id })
 
   def get_score(self):
     score = self.get('roll')

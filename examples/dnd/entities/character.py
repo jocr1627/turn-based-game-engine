@@ -128,10 +128,8 @@ class Character(Entity):
     
     return armor.get('modifier') + min(dexterity, dexterity_cap)
 
-  def get_roll(self, args):
-    dice = args['dice'] if dice in 'args' else None
-  
-    return roll(dice)
+  def get_roll(self, args):  
+    return roll(args['dice']) if 'dice' in args else roll()
 
   def get_target_character_ids(self, args):
     return args['valid_ids'][0:args['num_targets']]
@@ -161,7 +159,7 @@ class Character(Entity):
     args['roll_type'] = 'damage'
     damage = self.get_roll(args) + damage_modifier
 
-    if args['is_critical']
+    if args['is_critical']:
       damage *= 2
 
     return damage

@@ -1,4 +1,5 @@
 from engine.action import Action
+from engine.request import request
 from examples.dnd.actions.deal_damage import DealDamage
 from examples.dnd.actions.defend import Defend
 
@@ -10,13 +11,13 @@ class Attack(Action):
     defend = Defend(parent=target_character, state={ 'attack_id': self.id })
     defend.resolve()
     roll = self.get('roll')
-    attack_score = self.get_score()
+    attack_score = self.get('score')
     defense_roll = defend.get('roll')
     defense_score = defend.get('score')
 
     if defense_roll != 20 and roll != 1 and (roll == 20 or attack_score > defense_score):
-      is_critical = self.parent.request('is_critical', args={ 'roll': roll })
-      damage = self.parent.request('weapon_damage', args={ 'action_id': self.id, 'is_critical': is_critical })
+      is_critical = request(self.parent, 'is_critical', args={ 'roll': roll })
+      damage = request(self.parent, 'weapon_damage', args={ 'action_id': self.id, 'is_critical': is_critical })
       deal_damage = DealDamage(parent=target_character, state={ 'damage': damage })
       deal_damage.resolve()
     else:

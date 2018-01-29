@@ -54,7 +54,7 @@ class State:
     return getter(state_slice)
   
   def mutate(self, key, mutater):
-    state_slice = self.__get__(keys)
+    state_slice = self.__get__(key)
     mutater(state_slice)
 
   def mutate_in(self, key, mutater):

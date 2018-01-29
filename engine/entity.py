@@ -9,7 +9,7 @@ class Entity:
     self.descendants = {}
     self.diffs = []
     self.entity_classes = entity_classes
-    self.getters = gettters
+    self.getters = deep_merge(self.get_default_getters(), getters)
     self.listeners = {}
     self.parent = None
     self.root = self
@@ -159,12 +159,6 @@ class Entity:
 
       if len(self.root.diffs) > 0:
         diff.set_in(['children', self.id, child.id], (child, None))
-
-  def request(self, key, args={}):
-    request = Request(parent=self, state={ 'args': args, 'key': key })
-    request.resolve()
-
-    return request.get(key)
 
   def set(self, key, value):
     original_value = self.state.get(key)

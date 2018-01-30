@@ -1,5 +1,7 @@
 from engine.action import Action
+from engine.normalize_priority import normalize_priority
 from engine.request import request
+from examples.dnd.priorities import Priorities
 from examples.dnd.actions.deal_damage import DealDamage
 from examples.dnd.actions.defend import Defend
 
@@ -26,5 +28,8 @@ class Attack(Action):
   def get_default_state(self):
     return { 'roll': None, 'score': None, 'target_character_id': None }
 
-  def get_initiative(self):
-    return self.get('score')
+  def get_is_valid(self):
+    return self.hydrate('target_character_id').parent is self.parent.parent
+
+  def get_priority(self):
+    return normalize_priority(Priorities.STANDARD_ACTION, self.get('score'))

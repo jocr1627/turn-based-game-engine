@@ -1,3 +1,4 @@
+import random
 from engine.entity import Entity
 from examples.dnd.actions.plan_attack import PlanAttack
 from examples.dnd.actions.plan_turn import PlanTurn
@@ -119,7 +120,7 @@ class Character(Entity):
     return target_id_of_target is not self.id
   
   def get_plan_action_class_name(self, args):
-    return 'PlanAttack'
+    return random.choice(['PlanAttack', 'PlanAdvance', 'PlanMove', 'PlanFlee'])
 
   def get_physical_defense_modifier(self, args):
     armor = self.hydrate('armor_id')

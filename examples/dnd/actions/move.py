@@ -1,4 +1,5 @@
 from engine.action import Action
+from examples.dnd.priorities import Priorities
 
 class Move(Action):
   def execute(self, diff):
@@ -8,5 +9,5 @@ class Move(Action):
     target_location_name = target_location.get('name')
     print(f'{name} moved to {target_location_name}.')
 
-  def get_initiative(self):
-    return -1
+  def get_priority(self):
+    return Priorities.NO_ROLL_ACTION

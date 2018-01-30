@@ -1,5 +1,6 @@
 import re
 from engine.action import Action
+from examples.dnd.priorities import Priorities
 
 class Flee(Action):
   def execute(self, diff):
@@ -20,5 +21,5 @@ class Flee(Action):
     else:
       print(f'{name} stayed put.')
 
-  def get_initiative(self):
-    return -3
+  def get_priority(self):
+    return Priorities.FLEE

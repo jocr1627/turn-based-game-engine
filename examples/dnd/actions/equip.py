@@ -1,5 +1,6 @@
 import re
 from engine.action import Action
+from examples.dnd.priorities import Priorities
 
 class Equip(Action):
   def execute(self, diff):
@@ -10,5 +11,5 @@ class Equip(Action):
     self.parent.set('weapon_id', weapon_id)
     print(f'{name} equipped {weapon_name}.')
 
-  def get_initiative(self):
-    return -1
+  def get_priority(self):
+    return Priorities.NO_ROLL_ACTION

@@ -1,5 +1,6 @@
 import re
 from engine.action import Action
+from examples.dnd.priorities import Priorities
 
 class Advance(Action):
   def execute(self, diff):
@@ -20,5 +21,5 @@ class Advance(Action):
     else:
       print(f'{name} stayed put.')
 
-  def get_initiative(self):
-    return -2
+  def get_priority(self):
+    return Priorities.ADVANCE

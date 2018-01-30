@@ -56,7 +56,6 @@ class Character(Entity):
 
   def get_default_children(self):
     return [
-      PlanTurn(),
       SetTargetCharacter(),
       TakeTurn(),
     ]

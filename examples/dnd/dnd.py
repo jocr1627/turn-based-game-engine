@@ -7,6 +7,7 @@ from examples.dnd.actions.plan_attack import PlanAttack
 from examples.dnd.actions.plan_equip import PlanEquip
 from examples.dnd.actions.plan_flee import PlanFlee
 from examples.dnd.actions.plan_move import PlanMove
+from examples.dnd.actions.plan_phase import PlanPhase
 
 entity_class_list = [
   PlanAdvance,
@@ -27,3 +28,6 @@ class DnD(Game):
   def end_round(self):
     if self.get('round_number') == 2:
       self.set('is_in_progress', False)
+
+  def get_default_children(self):
+    return [PlanPhase()]

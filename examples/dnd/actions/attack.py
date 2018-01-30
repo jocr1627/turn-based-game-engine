@@ -32,4 +32,7 @@ class Attack(Action):
     return self.hydrate('target_character_id').parent is self.parent.parent
 
   def get_priority(self):
-    return normalize_priority(Priorities.STANDARD_ACTION, self.get('score'))
+    score = self.get('score')
+    initiative = score if score is not None else 0
+
+    return normalize_priority(Priorities.STANDARD_ACTION, initiative)

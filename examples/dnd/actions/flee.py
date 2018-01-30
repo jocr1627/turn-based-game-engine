@@ -20,6 +20,9 @@ class Flee(Action):
       print(f'{name} fleed from {target_character_name} to {flee_location_name}.')
     else:
       print(f'{name} stayed put.')
+    
+  def get_is_valid(self):
+    return self.hydrate('target_location_id') is not None
 
   def get_priority(self):
     return Priorities.FLEE

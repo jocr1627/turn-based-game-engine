@@ -1,3 +1,4 @@
+import re
 from examples.dnd.entities.character import Character
 
 text_to_abilities = {

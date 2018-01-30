@@ -1,6 +1,4 @@
-from enum import Enum
-
-class Priorities(Enum):
+class Priorities:
   FLEE = -4
   ADVANCE = -3
   NO_ROLL_ACTION = -2

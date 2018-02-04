@@ -6,11 +6,10 @@ from engine.state import State
 class Entity:
   next_entity_id = 0
 
-  def __init__(self, children=[], entity_classes={}, getters={}, parent=None, state={}):
+  def __init__(self, children=[], getters={}, parent=None, state={}):
     self.action_stack = ActionStack()
     self.descendants = {}
     self.diffs = []
-    self.entity_classes = entity_classes
     self.getters = deep_merge(self.get_default_getters(), getters)
     self.listeners = {}
     self.parent = None

@@ -3,16 +3,10 @@ from engine.game import Game
 from examples.go_fish.actions.max_value_request import MaxValueRequest
 from examples.go_fish.actions.user_input_request import UserInputRequest
 
-entity_class_list = [
-  MaxValueRequest,
-  UserInputRequest
-]
-entity_classes = { clazz.get_name(): clazz for clazz in entity_class_list }
-
 class GoFish(Game):
   def __init__(self, players):
     player_ids = set([player.id for player in players])
-    super().__init__(children=players, entity_classes=entity_classes, state={ 'player_ids': player_ids })
+    super().__init__(children=players, state={ 'player_ids': player_ids })
   
   def end_round(self):
     players = self.hydrate('player_ids')

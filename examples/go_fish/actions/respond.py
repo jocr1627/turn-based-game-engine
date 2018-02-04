@@ -13,7 +13,7 @@ class Respond(Action):
     if len(matching_cards) > 0:
       give = Give(parent=self.parent, state={ 'card': matching_cards[0], 'target_id': requestor.id })
       give.resolve()
-      request_class = self.root.entity_classes[request_class_name]
+      request_class = self.parent.get_request_class()
       request = request_class(parent=requestor)
       request.resolve()
     else:

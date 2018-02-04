@@ -13,11 +13,11 @@ from examples.go_fish.actions.max_value_request import MaxValueRequest
 from examples.go_fish.actions.score import Score
 from examples.go_fish.actions.start_turn import StartTurn
 from examples.go_fish.actions.user_input_request import UserInputRequest
-from examples.go_fish.entities.computer_player import ComputerPlayer
 from examples.go_fish.entities.human_player import HumanPlayer
+from examples.go_fish.entities.player import Player
 
 def go_fish():
-  players = [HumanPlayer(), ComputerPlayer()]
+  players = [HumanPlayer(), Player()]
   game = GoFish(players)
   game.run()
 

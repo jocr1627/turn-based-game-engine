@@ -1,3 +1,4 @@
+from engine.action import Phases
 from engine.listener import Listener
 from examples.go_fish.actions.request import Request
 
@@ -35,15 +36,17 @@ class UserInputRequest(Listener):
     action = Request(parent=self.parent, state=request_state)
     action.resolve()
 
-  def get_is_valid(self):
+  def get_is_valid(self, diff):
     return (
       self.parent.id is self.root.get('active_player_id')
       and self.root.get('is_in_progress')
     )
 
-  def get_should_react(self, trigger_action, diff, is_preparation):
+  def get_should_react(self, diff):
+    trigger = self.get_trigger()
+    
     return (
-      not is_preparation
-      and trigger_action.get_name() is 'StartTurn'
+      trigger.phase is Phases.EXECUTION
+      and trigger.get_name() is 'StartTurn'
       and self.parent.id is self.root.get('active_player_id')
     )

@@ -6,5 +6,5 @@ class Draw(Action):
     self.root.mutate('deck', lambda deck: deck.pop())
     self.parent.mutate('hand', lambda hand: hand.append(card))
 
-  def get_is_valid(self):
+  def get_is_valid(self, diff):
     return self.root.inspect('deck', lambda deck: len(deck) > 0)

@@ -10,7 +10,7 @@ class Request(Action):
     respond = Respond(parent=target, state=respond_state)
     respond.resolve()
 
-  def get_is_valid(self):
+  def get_is_valid(self, diff):
     return (
       self.parent.id is self.root.get('active_player_id')
       and self.hydrate('target_id').inspect('hand', lambda hand: len(hand) > 0)

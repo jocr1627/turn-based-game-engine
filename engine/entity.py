@@ -1,3 +1,4 @@
+from engine.action_stack import ActionStack
 from engine.deep_merge import deep_merge
 from engine.diff import Diff
 from engine.state import State
@@ -6,6 +7,7 @@ class Entity:
   next_entity_id = 0
 
   def __init__(self, children=[], entity_classes={}, getters={}, parent=None, state={}):
+    self.action_stack = ActionStack()
     self.descendants = {}
     self.diffs = []
     self.entity_classes = entity_classes
@@ -139,6 +141,9 @@ class Entity:
 
   def remove_child(self, child, diff=Diff()):
     if child.id in self.children:
+      if child in self.root.action_stack or len(child.action_stack) > 0:
+        raise Exception(f'Cannot alter an action\'s ancestry while in progress. Entity: {child.get_name()}, Action Stack: {child.action_stack.stack}')
+
       child.parent = None
       del self.children[child.id]
       del self.root.descendants[child.id]
@@ -154,7 +159,7 @@ class Entity:
         descendant = child.descendants[descendant_id]
         descendant.root = child
 
-        if hasattr(descendant, 'get_should_react'):
+        if hasattr(child, 'get_should_react'):
           child.listeners[descendant.id] = descendant
 
       if len(self.root.diffs) > 0:

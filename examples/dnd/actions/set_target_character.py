@@ -1,9 +1,10 @@
+from engine.action import Phases
 from engine.listener import Listener
 
 class SetTargetCharacter(Listener):
   def execute(self, diff):
-    trigger_action = self.root.triggers[-2]['action']
-    target_character_ids = trigger_action.get('target_character_ids')
+    trigger = self.get_trigger()
+    target_character_ids = trigger.get('target_character_ids')
     target_character_id = None
 
     if isinstance(target_character_ids, list) and len(target_character_ids) == 1:
@@ -11,10 +12,12 @@ class SetTargetCharacter(Listener):
 
     self.parent.set('target_character_id', target_character_id)
 
-  def get_should_react(self, trigger_action, diff, is_preparation):
+  def get_should_react(self, diff):
+    trigger = self.get_trigger()
+
     return (
-      not is_preparation
-      and trigger_action.get_name() is 'Request'
-      and trigger_action.get('key') is 'target_character_ids'
-      and trigger_action.parent is self.parent
+      trigger.phase is Phases.EXECUTION
+      and trigger.get_name() is 'Request'
+      and trigger.get('key') is 'target_character_ids'
+      and trigger.parent is self.parent
     )

@@ -1,3 +1,4 @@
+from engine.action import Phases
 from engine.listener import Listener
 from examples.dnd.actions.plan_turn import PlanTurn
 
@@ -9,5 +10,7 @@ class PlanPhase(Listener):
       plan_turn = PlanTurn(parent=character)
       plan_turn.resolve()
 
-  def get_should_react(self, trigger_action, diff, is_preparation):
-    return is_preparation and trigger_action.get_name() is 'StartRound'
+  def get_should_react(self, diff):
+    trigger = self.get_trigger()
+
+    return trigger.phase is Phases.PREPARATION and trigger.get_name() is 'StartRound'

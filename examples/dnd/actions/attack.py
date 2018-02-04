@@ -28,7 +28,7 @@ class Attack(Action):
   def get_default_state(self):
     return { 'roll': None, 'score': None, 'target_character_id': None }
 
-  def get_is_valid(self):
+  def get_is_valid(self, diff):
     return self.hydrate('target_character_id').parent is self.parent.parent
 
   def get_priority(self):

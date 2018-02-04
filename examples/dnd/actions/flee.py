@@ -21,7 +21,7 @@ class Flee(Action):
     else:
       print(f'{name} stayed put.')
     
-  def get_is_valid(self):
+  def get_is_valid(self, diff):
     return self.hydrate('target_location_id') is not None
 
   def get_priority(self):

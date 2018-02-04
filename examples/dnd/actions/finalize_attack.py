@@ -1,3 +1,4 @@
+from engine.action import Phases
 from engine.listener import Listener
 from engine.request import request
 
@@ -15,5 +16,7 @@ class FinalizeAttack(Listener):
 
     attack.set('score', score)
 
-  def get_should_react(self, trigger_action, diff, is_preparation):
-    return not is_preparation and trigger_action.get_name() is 'PlanPhase'
+  def get_should_react(self, diff):
+    trigger = self.get_trigger()
+
+    return trigger.phase is Phases.EXECUTION and trigger.get_name() is 'PlanPhase'

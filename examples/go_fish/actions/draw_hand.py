@@ -1,3 +1,4 @@
+from engine.action import Phases
 from engine.listener import Listener
 from examples.go_fish.actions.draw  import Draw
 
@@ -7,15 +8,17 @@ class DrawHand(Listener):
       draw = Draw(parent=self.parent)
       draw.resolve()
 
-  def get_is_valid(self):
+  def get_is_valid(self, diff):
     return (
       self.root.inspect('deck', lambda deck: len(deck) > 0)
       and self.parent.inspect('hand', lambda hand: len(hand) == 0)
     )
 
-  def get_should_react(self, trigger_action, diff, is_preparation):
+  def get_should_react(self, diff):
+    trigger = self.get_trigger()
+    
     return (
-      (not is_preparation and trigger_action.get_name() is 'StartGame')
+      (trigger.phase is Phases.EXECUTION and trigger.get_name() is 'StartGame')
       or diff.inspect_in(
         ['state', self.parent.id, 'hand'],
         lambda hand_diff: hand_diff is not None and len(hand_diff[1]) == 0

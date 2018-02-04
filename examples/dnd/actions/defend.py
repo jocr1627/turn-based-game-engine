@@ -4,6 +4,8 @@ from examples.dnd.actions.deal_damage import DealDamage
 
 class Defend(Action):
   def execute(self, diff):
+
+    
     roll = request(self.parent, 'roll', args={ 'action_id': self.id })
     self.set('roll', roll)
     physical_defense_modifier = request(self.parent, 'physical_defense_modifier')

@@ -8,7 +8,7 @@ class StartGame(Action):
 
     self.root.set('is_in_progress', True)
 
-  def get_is_valid(self):
+  def get_is_valid(self, diff):
     return not self.root.get('is_in_progress')
 
 class EndGame(Action):
@@ -33,7 +33,6 @@ class EndRound(Action):
 
 class Game(Entity):
   def run(self):
-    self.triggers = []
     self.set('is_in_progress', False)
     self.set('round_number', 0)
     start_game = StartGame(parent=self)

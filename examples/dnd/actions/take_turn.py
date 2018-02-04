@@ -1,3 +1,4 @@
+from engine.action import Phases
 from engine.listener import Listener
 
 class TakeTurn(Listener):
@@ -5,14 +6,16 @@ class TakeTurn(Listener):
     planned_action = self.parent.hydrate('planned_action_id')
     planned_action.resolve()
     
-  def get_is_valid(self):
+  def get_is_valid(self, diff):
     return self.parent.hydrate('planned_action_id') is not None
 
   def get_priority(self):
     return self.parent.hydrate('planned_action_id').get_priority()
 
-  def get_should_react(self, trigger_action, diff, is_preparation):
+  def get_should_react(self, diff):
+    trigger = self.get_trigger()
+
     return (
-      not is_preparation
-      and trigger_action.get_name() is 'StartRound'
+      trigger.phase is Phases.EXECUTION
+      and trigger.get_name() is 'StartRound'
     )

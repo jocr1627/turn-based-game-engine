@@ -19,3 +19,6 @@ class Advance(Action):
       print(f'{name} advanced on {target_name} to {advance_location_name}.')
     else:
       print(f'{name} stayed put.')
+
+  def get_initiative(self):
+    return -2

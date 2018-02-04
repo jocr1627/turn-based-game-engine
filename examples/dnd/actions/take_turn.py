@@ -10,7 +10,7 @@ class TakeTurn(Listener):
 
   def get_priority(self):
     planned_action = self.parent.hydrate('planned_action_id')
-    initiative = planned_action.get('initiative')
+    initiative = planned_action.get_initiative()
 
     return initiative if initiative is not None else 0
 

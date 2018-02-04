@@ -3,6 +3,9 @@ import sys
 from examples.dnd.dnd import DnD
 from examples.dnd.entities.character import Character
 from examples.dnd.entities.location import Location
+from examples.dnd.entities.armor.iron_armor import IronArmor
+from examples.dnd.entities.armor.robe import Robe
+from examples.dnd.entities.weapons.stone_sword import StoneSword
 from examples.go_fish.go_fish import GoFish
 from examples.go_fish.actions.draw_hand import DrawHand
 from examples.go_fish.actions.end_turn import EndTurn
@@ -61,17 +64,31 @@ def dnd():
     stairs,
     upstairs
   ]
-  abilities = [
-    'PlanAdvance',
-    'PlanFlee',
-    'PlanImpotentRage',
-    'PlanMove',
-    'PlanWhistle',
+  character_configs = [
+    {
+      'armor': Robe(),
+      'attributes': {
+        'constitution': 1,
+        'dexterity': 2,
+        'strength': 1
+      },
+      'name': 'Nigel',
+      'location': stairs,
+      'weapon': StoneSword()
+    },
+    {
+      'armor': IronArmor(),
+      'attributes': {
+        'constitution': 1,
+        'dexterity': 1,
+        'strength': 2
+      },
+      'name': 'John',
+      'location': bar,
+      'weapon': StoneSword()
+    }
   ]
-  characters = [
-    Character('Nigel', stairs, abilities),
-    Character('John', bar, abilities)
-  ]
+  characters = [Character(**config) for config in character_configs]
   game = DnD(characters, locations)
   game.run()
 

@@ -3,17 +3,17 @@ from engine.action import Action
 from engine.entity import Entity
 from engine.game import Game
 from examples.dnd.actions.plan_advance import PlanAdvance
+from examples.dnd.actions.plan_attack import PlanAttack
+from examples.dnd.actions.plan_equip import PlanEquip
 from examples.dnd.actions.plan_flee import PlanFlee
-from examples.dnd.actions.plan_impotent_rage import PlanImpotentRage
 from examples.dnd.actions.plan_move import PlanMove
-from examples.dnd.actions.plan_whistle import PlanWhistle
 
 entity_class_list = [
   PlanAdvance,
+  PlanAttack,
+  PlanEquip,
   PlanFlee,
-  PlanImpotentRage,
-  PlanMove,
-  PlanWhistle
+  PlanMove
 ]
 entity_classes = { clazz.get_name(): clazz for clazz in entity_class_list }
 

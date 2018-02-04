@@ -19,3 +19,6 @@ class Flee(Action):
       print(f'{name} fleed from {target_name} to {flee_location_name}.')
     else:
       print(f'{name} stayed put.')
+
+  def get_initiative(self):
+    return -3

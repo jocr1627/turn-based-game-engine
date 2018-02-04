@@ -5,7 +5,7 @@ from examples.dnd.actions.advance import Advance
 
 class PlanAdvance(Action):
   def execute(self, diff):
-    advance = Advance(parent=self.parent, state={ 'initiative': -1 })
+    advance = Advance(parent=self.parent)
     choose_character_target = ChooseCharacterTarget(parent=self, state={ 'action_id': advance.id })
     choose_character_target.resolve()
     advance.set('original_target_location_id', advance.hydrate('target_id').parent.id)

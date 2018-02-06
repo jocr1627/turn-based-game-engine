@@ -77,7 +77,6 @@ class Player(Character):
 
         if target_name in valid_target_ids_by_name:
           target_id = valid_target_ids_by_name[target_name]
-        elif targ
         else:
           print(f'{target_name} is not a valid target {target_type}. Options include: {list(valid_target_ids_by_name.keys())} Try again.')
       

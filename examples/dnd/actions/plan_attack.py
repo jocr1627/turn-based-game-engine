@@ -13,7 +13,7 @@ class PlanAttack(Action):
     target_character_id = target_character_ids[0] if len(target_character_ids) > 0 else None
     target_character = self.hydrate_by_id(target_character_id)
     attack.set('target_character_id', target_character_id)
-    roll = request(self.parent, 'roll', args={ 'action_id': attack.id })
+    roll = request(self.parent, 'roll', args={ 'action_id': attack.id, 'roll_type': 'attack' })
     attack.set('roll', roll)
     FinalizeAttack(parent=self.parent, state={ 'attack_id': attack.id })
     self.parent.set('planned_action_id', attack.id)

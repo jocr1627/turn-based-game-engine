@@ -15,8 +15,9 @@ class Player(Character):
     abilities = self.get('abilities')
     name = self.get('name')
     action_class_name = None
+    is_action_found = False
 
-    while action_class_name is None:
+    while not is_action_found:
       action_name = input(f'Enter an action for player {name}: ').lower()
       is_match_found = False
 
@@ -25,9 +26,10 @@ class Player(Character):
           is_match_found = True
           value = text_to_abilities[matcher]
           
-          if value in abilities:
-            action_class_name = text_to_abilities[matcher]
-          elif value is not None:
+          if value is None or value in abilities:
+            is_action_found = True
+            action_class_name = value
+          else:
             print(f'{name} does not have the ability to perform {action_name}.')
 
           break

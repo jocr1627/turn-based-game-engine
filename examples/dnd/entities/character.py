@@ -4,6 +4,8 @@ from examples.dnd.actions.plan_attack import PlanAttack
 from examples.dnd.actions.plan_turn import PlanTurn
 from examples.dnd.actions.set_target_character import SetTargetCharacter
 from examples.dnd.actions.take_turn import TakeTurn
+from examples.dnd.actions.update_critical_chance_by_guile import UpdateCriticalChanceByGuile
+from examples.dnd.actions.update_max_hp_by_constitution import UpdateMaxHpByConstitution
 from examples.dnd.entities.weapons.fists import Fists
 from examples.dnd.utils.roll import roll
 
@@ -56,6 +58,8 @@ class Character(Entity):
 
   def get_default_children(self):
     return [
+      UpdateCriticalChanceByGuile(),
+      UpdateMaxHpByConstitution(),
       SetTargetCharacter(),
       TakeTurn(),
     ]

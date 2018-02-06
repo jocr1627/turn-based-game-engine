@@ -4,8 +4,8 @@ class State:
   def __init__(self, raw_state={}):
     self.raw_state = raw_state
   
-  def __contains__(self, key):
-    return key in self.raw_state
+  def __contains__(self, key_or_keys):
+    return self.has_in(key_or_keys) if isinstance(key_or_keys, list) else key_or_keys in self.raw_state
 
   def __get__(self, key):
     return self.raw_state[key] if key in self.raw_state else None

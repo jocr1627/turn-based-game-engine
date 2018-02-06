@@ -19,6 +19,8 @@ plan_class_map = { clazz.get_name(): clazz for clazz in plan_classes }
 class PlanTurn(Action):
   def execute(self, diff):
     action_class_name = request(self.parent, 'plan_action_class_name')
-    action_class = plan_class_map[action_class_name]
-    action = action_class(parent=self.parent)
-    action.resolve()
+
+    if action_class_name is not None:
+      action_class = plan_class_map[action_class_name]
+      action = action_class(parent=self.parent)
+      action.resolve()

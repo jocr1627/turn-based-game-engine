@@ -6,6 +6,7 @@ text_to_abilities = {
   r'attack': 'PlanAttack',
   r'equip': 'PlanEquip',
   r'flee': 'PlanFlee',
+  r'idle': None,
   r'move': 'PlanMove'
 }
 
@@ -22,10 +23,11 @@ class Player(Character):
       for matcher in text_to_abilities:
         if re.match(matcher, action_name):
           is_match_found = True
+          value = text_to_abilities[matcher]
           
-          if text_to_abilities[matcher] in abilities:
+          if value in abilities:
             action_class_name = text_to_abilities[matcher]
-          else:
+          elif value is not None:
             print(f'{name} does not have the ability to perform {action_name}.')
 
           break

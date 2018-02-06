@@ -6,6 +6,7 @@ from examples.dnd.actions.set_target_character import SetTargetCharacter
 from examples.dnd.actions.take_turn import TakeTurn
 from examples.dnd.actions.update_critical_chance_by_guile import UpdateCriticalChanceByGuile
 from examples.dnd.actions.update_max_hp_by_constitution import UpdateMaxHpByConstitution
+from examples.dnd.actions.update_max_mp_by_willpower import UpdateMaxMpByWillpower
 from examples.dnd.entities.weapons.fists import Fists
 from examples.dnd.utils.roll import roll
 
@@ -13,6 +14,11 @@ def get_max_hp(level, constitution, is_health_based):
   base_health = 20 if is_health_based else 10
   
   return base_health + 2 * level + 5 * constitution
+
+def get_max_mp(willpower, is_health_based):
+  base_mana = 4 if is_health_based else 6
+
+  return base_mana + willpower
 
 class Character(Entity):
   def __init__(
@@ -27,6 +33,7 @@ class Character(Entity):
     level=1,
     location=None,
     max_hp=None,
+    max_mp=None,
     weapon=None
   ):
     children = inventory + [default_weapon]
@@ -40,6 +47,8 @@ class Character(Entity):
     constitution = attributes['constitution'] if 'constitution' in attributes else 0
     guile = attributes['guile'] if 'guile' in attributes else 0
     max_hp = max_hp if max_hp is not None else get_max_hp(level, constitution, is_health_based)
+    willpower = attributes['willpower'] if 'willpower' in attributes else 0
+    max_mp = max_mp if max_mp is not None else get_max_mp(willpower, is_health_based)
     weapon_id = weapon.id if weapon is not None else None
     state = {
       'abilities': abilities,
@@ -51,6 +60,8 @@ class Character(Entity):
       'inventory': [item.id for item in inventory],
       'level': level,
       'max_hp': max_hp,
+      'max_mp': max_mp,
+      'mp': max_mp,
       'name': name,
       'weapon_id': weapon_id
     }
@@ -60,6 +71,7 @@ class Character(Entity):
     return [
       UpdateCriticalChanceByGuile(),
       UpdateMaxHpByConstitution(),
+      UpdateMaxMpByWillpower(),
       SetTargetCharacter(),
       TakeTurn(),
     ]
@@ -103,6 +115,8 @@ class Character(Entity):
       'inventory': [],
       'level': 1,
       'max_hp': 1,
+      'max_mp': 0,
+      'mp': 0,
       'name': self.get_name(),
       'planned_action_id': None,
       'target_character_id': None,

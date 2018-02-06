@@ -27,7 +27,16 @@ class Entity:
     for child in children_list:
       self.add_child(child)
 
-    raw_state = deep_merge(self.get_default_state(), state)
+    inheritor_stack = [self]
+    raw_state = state
+
+    while len(inheritor_stack) > 0:
+      inheritor = inheritor_stack.pop()
+      raw_state = deep_merge(inheritor.get_default_state(), raw_state)
+      clazz = inheritor.__thisclass__ if isinstance(inheritor, super) else inheritor.__class__
+      supers = [super(base, self) for base in clazz.__bases__]
+      inheritor_stack += [zuper for zuper in supers if hasattr(zuper, 'get_default_state')]
+
     self.state = State(raw_state)
   
   def add_child(self, child, diff=Diff()):

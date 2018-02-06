@@ -1,6 +1,6 @@
-from engine.entity import Entity
+from examples.dnd.entities.item import Item
 
-class Armor(Entity):
+class Armor(Item):
   def __init__(
     self,
     modifier,
@@ -13,14 +13,10 @@ class Armor(Entity):
       'dexterity_cap': dexterity_cap
     }
 
-    if name is not None:
-      state['name'] = name
-
-    super().__init__(parent=owner, state=state)
+    super().__init__(name=name, owner=owner, state=state)
   
   def get_default_state(self):
     return {
       'modifier': 0,
       'dexterity_cap': None,
-      'name': self.get_name()
     }

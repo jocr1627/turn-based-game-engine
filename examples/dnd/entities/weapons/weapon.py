@@ -1,6 +1,6 @@
-from engine.entity import Entity
+from examples.dnd.entities.item import Item
 
-class Weapon(Entity):
+class Weapon(Item):
   def __init__(
     self,
     dice,
@@ -19,10 +19,7 @@ class Weapon(Entity):
       'dice': dice
     }
 
-    if name is not None:
-      state['name'] = name
-
-    super().__init__(parent=owner, state=state)
+    super().__init__(name=name, owner=owner, state=state)
   
   def get_default_state(self):
     return {
@@ -31,5 +28,4 @@ class Weapon(Entity):
       'attribute_caps': {},
       'damage_modifier': 0,
       'dice': {},
-      'name': self.get_name()
     }

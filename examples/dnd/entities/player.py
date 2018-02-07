@@ -55,7 +55,7 @@ class Player(Character):
       except ValueError:
         print(f'{raw_roll} is not a valid roll.')
 
-    return roll
+    return (roll, roll)
 
   def get_target_character_ids(self, args):
     return self.get_target_ids('character', args)

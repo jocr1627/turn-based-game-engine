@@ -7,8 +7,9 @@ class Request(Action):
     value = self.parent.getters[key](args)
     self.set(key, value)
 
-def request(entity, key, args={}):
-  request = Request(parent=entity, state={ 'args': args, 'key': key })
+def request(requestor, entity, key, args={}):
+  state={ 'args': args, 'key': key, 'requestor_id': requestor.id }
+  request = Request(parent=entity, state=state)
   request.resolve()
 
   return request.get(key)

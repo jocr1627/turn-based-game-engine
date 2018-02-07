@@ -5,7 +5,7 @@ class Weapon(Item):
     self,
     dice,
     attack_modifier=0,
-    attack_type='physical',
+    attack_type=None,
     attribute_caps={},
     damage_modifier=0,
     name=None,
@@ -24,7 +24,7 @@ class Weapon(Item):
   def get_default_state(self):
     return {
       'attack_modifier': 0,
-      'attack_type': 'physical',
+      'attack_type': None,
       'attribute_caps': {},
       'damage_modifier': 0,
       'dice': {},

@@ -10,7 +10,7 @@ class DnD(Game):
     super().__init__(children=locations, state=state)
 
   def end_round(self):
-    if self.get('round_number') == 2:
+    if self.get('round_number') == 5:
       self.set('is_in_progress', False)
 
   def get_default_children(self):

@@ -20,12 +20,6 @@ class Entity:
     
     if parent is not None:
       parent.add_child(self)
-    
-    self.children = {}
-    children_list = self.get_default_children() + children
-
-    for child in children_list:
-      self.add_child(child)
 
     inheritor_stack = [self]
     raw_state = state
@@ -38,8 +32,14 @@ class Entity:
       inheritor_stack += [zuper for zuper in supers if hasattr(zuper, 'get_default_state')]
 
     self.state = State(raw_state)
+        
+    self.children = {}
+    children_list = self.get_default_children() + children
+
+    for child in children_list:
+      self.add_child(child)
   
-  def add_child(self, child, diff=Diff()):
+  def add_child(self, child):
     if child.id not in self.children:
       if child.parent is not None:
         child.parent.remove_child(child)
@@ -64,6 +64,7 @@ class Entity:
       child.listeners = {}
 
       if len(self.root.diffs) > 0:
+        diff = self.root.diffs[-1]
         diff.set_in(['children', self.id, child.id], (None, child))
   
   def end_diff(self):
@@ -147,7 +148,7 @@ class Entity:
       diff = self.root.diffs[-1]
       diff.set_in(['state', self.id, *keys], (original_value, value))
 
-  def remove_child(self, child, diff=Diff()):
+  def remove_child(self, child):
     if child.id in self.children:
       if child in self.root.action_stack or len(child.action_stack) > 0:
         raise Exception(f'Cannot alter an action\'s ancestry while in progress. Entity: {child.get_name()}, Action Stack: {child.action_stack.stack}')
@@ -171,6 +172,7 @@ class Entity:
           child.listeners[descendant.id] = descendant
 
       if len(self.root.diffs) > 0:
+        diff = self.root.diffs[-1]
         diff.set_in(['children', self.id, child.id], (child, None))
 
   def set(self, key, value):

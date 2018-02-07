@@ -1,7 +1,10 @@
 class ActionStack:
-  def __init__(self):
+  def __init__(self, stack=[]):
     self.map = {}
     self.stack = []
+
+    for action in stack:
+      self.push(action)
 
   def __contains__(self, action):
     key = self.get_key(action)

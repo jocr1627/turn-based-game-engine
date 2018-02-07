@@ -1,8 +1,10 @@
 import cProfile
 import sys
 from examples.dnd.dnd import DnD
+from examples.dnd.actions.weapon_focus  import WeaponFocus
 from examples.dnd.entities.character import Character
 from examples.dnd.entities.location import Location
+from examples.dnd.entities.player import Player as DndPlayer
 from examples.dnd.entities.armor.iron_armor import IronArmor
 from examples.dnd.entities.armor.robe import Robe
 from examples.dnd.entities.weapons.stone_sword import StoneSword
@@ -14,10 +16,10 @@ from examples.go_fish.actions.score import Score
 from examples.go_fish.actions.start_turn import StartTurn
 from examples.go_fish.actions.user_input_request import UserInputRequest
 from examples.go_fish.entities.human_player import HumanPlayer
-from examples.go_fish.entities.player import Player
+from examples.go_fish.entities.player import Player as GoFishPlayer
 
 def go_fish():
-  players = [HumanPlayer(), Player()]
+  players = [HumanPlayer(), GoFishPlayer()]
   game = GoFish(players)
   game.run()
 
@@ -73,7 +75,8 @@ def dnd():
         'strength': 1
       },
       'name': 'Nigel',
-      'location': stairs,
+      'location': bar,
+      'passive_abilities': [WeaponFocus()],
       'weapon': StoneSword()
     },
     {
@@ -88,7 +91,7 @@ def dnd():
       'weapon': StoneSword()
     }
   ]
-  characters = [Character(**config) for config in character_configs]
+  characters = [DndPlayer(**config) for config in character_configs]
   game = DnD(characters, locations)
   game.run()
 

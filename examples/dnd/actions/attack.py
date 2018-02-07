@@ -12,21 +12,27 @@ class Attack(Action):
     target_character_name = target_character.get('name')
     defend = Defend(parent=target_character, state={ 'attack_id': self.id })
     defend.resolve()
-    roll = self.get('roll')
+    base_roll = self.get('base_roll')
     attack_score = self.get('score')
-    defense_roll = defend.get('roll')
+    base_defense_roll = defend.get('base_roll')
     defense_score = defend.get('score')
 
-    if defense_roll != 20 and roll != 1 and (roll == 20 or attack_score > defense_score):
-      is_critical = request(self.parent, 'is_critical', args={ 'roll': roll })
-      damage = request(self.parent, 'weapon_damage', args={ 'action_id': self.id, 'is_critical': is_critical })
+    if base_defense_roll != 20 and base_roll != 1 and (base_roll == 20 or attack_score > defense_score):
+      weapon = self.parent.get_weapon()
+      dice = weapon.get('dice')
+      damage_roll_args = { 'action_id': self.id, 'dice': dice, 'roll_type': 'damage' }
+      base_damage_roll,modified_damage_roll = request(self, self.parent, 'roll', args=damage_roll_args)
+      is_critical_args = args={ 'base_roll': base_roll, 'target_character_ids': [target_character.id] }
+      is_critical = request(self, self.parent, 'is_critical', args=is_critical_args)
+      weapon_damage_args = { 'action_id': self.id, 'is_critical': is_critical, 'roll': modified_damage_roll }
+      damage = request(self, self.parent, 'weapon_damage', args=weapon_damage_args)
       deal_damage = DealDamage(parent=target_character, state={ 'damage': damage })
       deal_damage.resolve()
     else:
       print(f'{target_character_name} successfully defended against {name}\'s Attack.')
 
   def get_default_state(self):
-    return { 'roll': None, 'score': None, 'target_character_id': None }
+    return { 'base_roll': None, 'modified_roll': None, 'score': None, 'target_character_id': None }
 
   def get_is_valid(self, diff):
     return self.hydrate('target_character_id').parent is self.parent.parent

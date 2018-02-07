@@ -1,5 +1,6 @@
 import random
 from engine.entity import Entity
+from engine.request import request
 from examples.dnd.actions.plan_attack import PlanAttack
 from examples.dnd.actions.plan_turn import PlanTurn
 from examples.dnd.actions.set_target_character import SetTargetCharacter
@@ -34,9 +35,10 @@ class Character(Entity):
     location=None,
     max_hp=None,
     max_mp=None,
+    passive_abilities=[],
     weapon=None
   ):
-    children = inventory + [default_weapon]
+    children = inventory + passive_abilities + [default_weapon]
 
     if armor is not None:
       children.append(armor)
@@ -125,9 +127,9 @@ class Character(Entity):
   
   def get_is_critical(self, args):
     critical_chance = self.get('critical_chance')
-    roll = args['roll']
+    base_roll = args['base_roll']
 
-    return round(1 - roll / 20, 2) < critical_chance
+    return round(1 - base_roll / 20, 2) < critical_chance
   
   def get_is_flanking(self, args):
     target_character_id = args['target_character_id']
@@ -147,7 +149,9 @@ class Character(Entity):
     return armor.get('modifier') + min(dexterity, dexterity_cap)
 
   def get_roll(self, args):  
-    return roll(args['dice']) if 'dice' in args else roll()
+    roll_result = roll(args['dice']) if 'dice' in args else roll()
+
+    return (roll_result, roll_result)
 
   def get_target_character_ids(self, args):
     return args['valid_ids'][0:args['num_targets']]
@@ -173,9 +177,7 @@ class Character(Entity):
   def get_weapon_damage(self, args):
     weapon = self.get_weapon()
     damage_modifier = weapon.get('damage_modifier')
-    args['dice'] = weapon.get('dice')
-    args['roll_type'] = 'damage'
-    damage = self.get_roll(args) + damage_modifier
+    damage = args['roll'] + damage_modifier
 
     if args['is_critical']:
       damage *= 2

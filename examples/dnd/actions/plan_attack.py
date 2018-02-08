@@ -6,7 +6,7 @@ from examples.dnd.actions.finalize_attack import FinalizeAttack
 class PlanAttack(Action):
   def execute(self, diff):
     attack = Attack(parent=self.parent)
-    character_ids = self.root.get('character_ids')
+    character_ids = self.game.get('character_ids')
     other_character_ids = [character_id for character_id in character_ids if character_id is not self.parent.id]
     target_character_id_args = { 'action_id': attack.id, 'num_targets': 1, 'valid_ids': other_character_ids }
     target_character_ids = request(self, self.parent, 'target_character_ids', args=target_character_id_args)

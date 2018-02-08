@@ -1,8 +1,8 @@
 from engine.action import Phases
-from engine.listener import Listener
+from engine.base_entity_listener import BaseEntityListener
 from examples.go_fish.actions.draw  import Draw
 
-class DrawHand(Listener):
+class DrawHand(BaseEntityListener):
   def execute(self, diff):
     for i in range(5):
       draw = Draw(parent=self.parent)
@@ -10,7 +10,7 @@ class DrawHand(Listener):
 
   def get_is_valid(self, diff):
     return (
-      self.root.inspect('deck', lambda deck: len(deck) > 0)
+      self.game.inspect('deck', lambda deck: len(deck) > 0)
       and self.parent.inspect('hand', lambda hand: len(hand) == 0)
     )
 

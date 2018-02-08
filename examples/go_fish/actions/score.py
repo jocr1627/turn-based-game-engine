@@ -1,7 +1,7 @@
-from engine.listener import Listener
+from engine.base_entity_listener import BaseEntityListener
 from examples.go_fish.actions.discard import Discard
 
-class Score(Listener):
+class Score(BaseEntityListener):
   def execute(self, diff):
     hand = self.parent.get('hand')
     hand_by_rank = {}

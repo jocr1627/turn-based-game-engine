@@ -12,7 +12,7 @@ class Request(Action):
 
   def get_is_valid(self, diff):
     return (
-      self.parent.id is self.root.get('active_player_id')
+      self.parent.id is self.game.get('active_player_id')
       and self.hydrate('target_id').inspect('hand', lambda hand: len(hand) > 0)
-      and self.root.get('is_in_progress')
+      and self.game.get('is_in_progress')
     )

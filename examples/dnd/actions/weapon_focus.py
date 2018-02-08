@@ -1,5 +1,5 @@
 from engine.action import Phases
-from engine.listener import Listener
+from engine.base_entity_listener import BaseEntityListener
 from examples.dnd.attack_types import AttackTypes
 from examples.dnd.actions.slashing_critical_effect import SlashingCriticalEffect
 
@@ -7,7 +7,7 @@ attack_types_to_effects = {
   AttackTypes.SLASHING: SlashingCriticalEffect
 }
 
-class WeaponFocus(Listener):
+class WeaponFocus(BaseEntityListener):
   def execute(self, diff):
     trigger = self.get_trigger()
     requestor = trigger.hydrate('requestor_id')
@@ -15,7 +15,7 @@ class WeaponFocus(Listener):
     EffectClass = attack_types_to_effects[attack_type] if attack_type in attack_types_to_effects else None
 
     if EffectClass is not None:
-      round_number = self.root.get('round_number')
+      round_number = self.game.get('round_number')
       target_characters = trigger.hydrate_in(['args', 'target_character_ids'])
 
       for character in target_characters:

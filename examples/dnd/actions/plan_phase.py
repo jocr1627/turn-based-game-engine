@@ -1,10 +1,10 @@
 from engine.action import Phases
-from engine.listener import Listener
+from engine.base_entity_listener import BaseEntityListener
 from examples.dnd.actions.plan_turn import PlanTurn
 
-class PlanPhase(Listener):
+class PlanPhase(BaseEntityListener):
   def execute(self, diff):
-    characters = self.root.hydrate('character_ids')
+    characters = self.game.hydrate('character_ids')
 
     for character in characters:
       plan_turn = PlanTurn(parent=character)

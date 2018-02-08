@@ -1,6 +1,6 @@
-from engine.listener import Listener
+from engine.base_entity_listener import BaseEntityListener
 
-class UpdateMaxHpByConstitution(Listener):
+class UpdateMaxHpByConstitution(BaseEntityListener):
   def execute(self, diff):
     constitution,new_constitution = diff.get_in(['state', self.parent.id, 'attributes', 'constitution'])
     difference = new_constitution - constitution

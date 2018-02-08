@@ -1,4 +1,4 @@
-from engine.action_stack import ActionStack
+from engine.base_listener import BaseListener
 from engine.deep_merge import deep_merge
 from engine.diff import Diff
 from engine.state import State
@@ -6,21 +6,14 @@ from engine.state import State
 class Entity:
   next_entity_id = 0
 
-  def __init__(self, children=[], getters={}, parent=None, state={}):
-    self.action_stack = ActionStack()
-    self.descendants = {}
-    self.diffs = []
+  def __init__(self, children=[], game=None, getters={}, parent=None, state={}):
+    self.game = game
     self.getters = deep_merge(self.get_default_getters(), getters)
-    self.listeners = {}
     self.parent = None
-    self.root = self
 
     self.id = Entity.next_entity_id
     Entity.next_entity_id += 1
     
-    if parent is not None:
-      parent.add_child(self)
-
     inheritor_stack = [self]
     raw_state = state
 
@@ -38,6 +31,9 @@ class Entity:
 
     for child in children_list:
       self.add_child(child)
+    
+    if parent is not None:
+      parent.add_child(self)
   
   def add_child(self, child):
     if child.id not in self.children:
@@ -45,28 +41,15 @@ class Entity:
         child.parent.remove_child(child)
 
       self.children[child.id] = child
+      child.game = self.game
       child.parent = self
-      child.root = self.root
-      self.root.descendants[child.id] = child
+      self.register_descendant(child)
+      
+      for descendant in child.get_descendants([]):
+        self.register_descendant(descendant)
 
-      if hasattr(child, 'get_should_react'):
-        self.root.listeners[child.id] = child
+      self.update_diff(['children', self.id, child.id], False, True)
 
-      for descendant_id in child.descendants:
-        descendant = child.descendants[descendant_id]
-        self.root.descendants[descendant_id] = descendant
-        descendant.root = self.root
-
-      for listener_id in child.listeners:
-        self.root.listeners[listener_id] = child.listeners[listener_id]
-
-      child.descendants = {}
-      child.listeners = {}
-
-      if len(self.root.diffs) > 0:
-        diff = self.root.diffs[-1]
-        diff.set_in(['children', self.id, child.id], (None, child))
-  
   def end_diff(self):
     return self.diffs.pop()
   
@@ -85,9 +68,9 @@ class Entity:
   def get_default_state(self):
     return {}
 
-  def get_descendants(self, descendants={}):
+  def get_descendants(self, descendants):
     for child in self.children.values():
-      descendants[child.id] = child
+      descendants.append(child)
       descendants = child.get_descendants(descendants)
     
     return descendants
@@ -106,20 +89,23 @@ class Entity:
     return self.hydrate_by_id(self.get(key))
 
   def hydrate_by_id(self, id_or_ids):
+    if self.game is None:
+      raise Exception(f'Cannot hydrate values when game is unassigned: {self.get_name()} {self.id}')
+
     if type(id_or_ids) is list or type(id_or_ids) is set:
       hydrated_values = []
 
       for entity_id in id_or_ids:
         entity = None
 
-        if entity_id in self.root.descendants:
-          entity = self.root.descendants[entity_id]
+        if entity_id in self.game.descendants:
+          entity = self.game.descendants[entity_id]
         
         hydrated_values.append(entity)
       
       return hydrated_values
-    elif id_or_ids in self.root.descendants:
-      return self.root.descendants[id_or_ids]
+    elif id_or_ids in self.game.descendants:
+      return self.game.descendants[id_or_ids]
 
   def hydrate_in(self, keys):
     return self.hydrate_by_id(self.get_in(keys))
@@ -134,83 +120,72 @@ class Entity:
     original_value = self.state.get(key)
     self.state.mutate(key, mutater)
     value = self.state.__get__(key)
-    
-    if len(self.root.diffs) > 0:
-      diff = self.root.diffs[-1]
-      diff.set_in(['state', self.id, key], (original_value, value))
-  
+    self.update_diff(['state', self.id, key], original_value, value)
+
   def mutate_in(self, keys, mutater):
     original_value = self.state.get_in(keys)
     self.state.mutate_in(keys, mutater)
     value = self.state.__get_in__(keys)
-    
-    if len(self.root.diffs) > 0:
-      diff = self.root.diffs[-1]
-      diff.set_in(['state', self.id, *keys], (original_value, value))
+    self.update_diff(['state', self.id, *keys], original_value, value)
+
+  def register_descendant(self, descendant):
+    descendant.game = self.game
+
+    if self.game is not None:
+      self.game.descendants[descendant.id] = descendant
+
+      if isinstance(descendant, BaseListener):
+        self.game.listeners[descendant.id] = descendant
 
   def remove_child(self, child):
     if child.id in self.children:
-      if child in self.root.action_stack or len(child.action_stack) > 0:
-        raise Exception(f'Cannot alter an action\'s ancestry while in progress. Entity: {child.get_name()}, Action Stack: {child.action_stack.stack}')
-
       child.parent = None
       del self.children[child.id]
-      del self.root.descendants[child.id]
-      child.root = child
-      child.descendants = child.get_descendants()
-      child.listeners = {}
+      self.unregister_descendant(child)
 
-      if child.id in self.root.listeners:
-        del self.root.listeners[child.id]
+      for descendant in child.get_descendants([]):
+        self.unregister_descendant(descendant)
 
-      for descendant_id in child.descendants:
-        del self.root.descendants[descendant_id]
-        descendant = child.descendants[descendant_id]
-        descendant.root = child
-
-        if hasattr(child, 'get_should_react'):
-          child.listeners[descendant.id] = descendant
-
-      if len(self.root.diffs) > 0:
-        diff = self.root.diffs[-1]
-        diff.set_in(['children', self.id, child.id], (child, None))
+      self.update_diff(['children', self.id, child.id], True, False)
 
   def set(self, key, value):
     original_value = self.state.get(key)
     self.state.set(key, value)
-    
-    if len(self.root.diffs) > 0:
-      diff = self.root.diffs[-1]
-      diff.set_in(['state', self.id, key], (original_value, value))
+    self.update_diff(['state', self.id, key], original_value, value)
   
   def set_in(self, keys, value):
     original_value = self.state.get_in(keys)
     self.state.set_in(keys, value)
-    
-    if len(self.root.diffs) > 0:
-      diff = self.root.diffs[-1]
-      diff.set_in(['state', self.id, *keys], (original_value, value))
+    self.update_diff(['state', self.id, *keys], original_value, value)
   
   def start_diff(self):
     diff = Diff()
     self.diffs.append(diff)
 
     return diff
+  
+  def update_diff(self, keys, original_value, value):
+    if self.game is not None and len(self.game.diffs) > 0:
+      diff = self.game.diffs[-1]
+      diff.set_in(keys, (original_value, value))
 
   def update(self, key, updater):
     original_value = self.state.get(key)
     self.state.update(key, updater)
     value = self.state.__get__(key)
-    
-    if len(self.root.diffs) > 0:
-      diff = self.root.diffs[-1]
-      diff.set_in(['state', self.id, key], (original_value, value))
-  
+    self.update_diff(['state', self.id, key], original_value, value)
+
   def update_in(self, keys, updater):
     original_value = self.state.get_in(keys)
     self.state.update_in(keys, updater)
     value = self.state.__get_in__(keys)
-    
-    if len(self.root.diffs) > 0:
-      diff = self.root.diffs[-1]
-      diff.set_in(['state', self.id, *keys], (original_value, value))
+    self.update_diff(['state', self.id, *keys], original_value, value)
+
+  def unregister_descendant(self, descendant):
+    descendant.game = None
+
+    if self.game is not None:
+      del self.game.descendants[descendant.id]
+
+      if descendant.id in self.game.listeners:
+        del self.game.listeners[descendant.id]

@@ -1,6 +1,6 @@
-from engine.listener import Listener
+from engine.base_entity_listener import BaseEntityListener
 
-class UpdateCriticalChanceByGuile(Listener):
+class UpdateCriticalChanceByGuile(BaseEntityListener):
   def execute(self, diff):
     guile,new_guile = diff.get_in(['state', self.parent.id, 'attributes', 'guile'])
     difference = new_guile - guile

@@ -1,12 +1,12 @@
 from engine.action import Phases
-from engine.listener import Listener
+from engine.base_entity_listener import BaseEntityListener
 
-class EndTurn(Listener):
+class EndTurn(BaseEntityListener):
   def execute(self, diff):
-    self.root.set('active_player_id', None)
+    self.game.set('active_player_id', None)
 
   def get_is_valid(self, diff):
-    return self.parent.id is self.root.get('active_player_id')
+    return self.parent.id is self.game.get('active_player_id')
 
   def get_should_react(self, diff):
     trigger = self.get_trigger()
@@ -14,5 +14,5 @@ class EndTurn(Listener):
     return (
       trigger.phase is Phases.EXECUTION
       and trigger.get_name() is 'Request'
-      and self.parent.id is self.root.get('active_player_id')
+      and self.parent.id is self.game.get('active_player_id')
     )

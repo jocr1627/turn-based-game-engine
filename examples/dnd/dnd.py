@@ -7,6 +7,7 @@ class DnD(Game):
     character_ids = set([character.id for character in characters])
     location_ids = set([location.id for location in locations])
     state = { 'character_ids': character_ids, 'location_ids': location_ids }
+
     super().__init__(children=locations, state=state)
 
   def end_round(self):

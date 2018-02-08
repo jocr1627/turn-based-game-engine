@@ -1,9 +1,10 @@
 from engine.action import Phases
-from engine.listener import Listener
+from engine.base_entity_listener import BaseEntityListener
 
-class TakeTurn(Listener):
+class TakeTurn(BaseEntityListener):
   def execute(self, diff):
     planned_action = self.parent.hydrate('planned_action_id')
+    self.parent.set('planned_action_id', None)
     planned_action.resolve()
     
   def get_is_valid(self, diff):

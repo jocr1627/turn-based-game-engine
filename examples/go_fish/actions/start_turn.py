@@ -1,9 +1,9 @@
 from engine.action import Phases
-from engine.listener import Listener
+from engine.base_entity_listener import BaseEntityListener
 
-class StartTurn(Listener):
+class StartTurn(BaseEntityListener):
   def execute(self, diff):
-    self.root.set('active_player_id', self.parent.id)
+    self.game.set('active_player_id', self.parent.id)
 
   def get_should_react(self, diff):
     trigger = self.get_trigger()

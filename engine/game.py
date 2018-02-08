@@ -1,37 +1,45 @@
 from engine.action import Action
+from engine.action_stack import ActionStack
 from engine.entity import Entity
 
 class StartGame(Action):
   def execute(self, diff):
-    if hasattr(self.root, 'start_game'):
-      self.root.start_game()
-
-    self.root.set('is_in_progress', True)
+    self.game.start_game()
+    self.game.set('is_in_progress', True)
 
   def get_is_valid(self, diff):
-    return not self.root.get('is_in_progress')
+    return not self.game.get('is_in_progress')
 
 class EndGame(Action):
   def execute(self, diff):
-    if hasattr(self.root, 'end_game'):
-      self.root.end_game()
-
-    self.root.set('is_in_progress', False)
+    self.game.end_game()
+    self.game.set('is_in_progress', False)
 
 class StartRound(Action):
   def execute(self, diff):
-    if hasattr(self.root, 'start_round'):
-      self.root.start_round()
-
-    round_number = self.root.get('round_number')
-    self.root.set('round_number', round_number + 1)
+    self.game.start_round()
+    round_number = self.game.get('round_number')
+    self.game.set('round_number', round_number + 1)
 
 class EndRound(Action):
   def execute(self, diff):
-    if hasattr(self.root, 'end_round'):
-      self.root.end_round()
+    self.game.end_round()
 
 class Game(Entity):
+  def __init__(self, children=[], getters={}, state={}):
+    self.action_stack = ActionStack()
+    self.descendants = {}
+    self.diffs = []
+    self.listeners = {}
+
+    super().__init__(children=children, game=self, getters=getters, state=state)
+
+  def end_game(self):
+    return
+
+  def end_round(self):
+    return
+
   def run(self):
     self.set('is_in_progress', False)
     self.set('round_number', 0)
@@ -46,3 +54,9 @@ class Game(Entity):
   
     end_game = EndGame(parent=self)
     end_game.resolve()
+
+  def start_game(self):
+    return
+
+  def start_round(self):
+    return

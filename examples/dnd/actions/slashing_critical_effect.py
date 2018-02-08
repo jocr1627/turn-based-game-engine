@@ -3,7 +3,6 @@ from examples.dnd.actions.duration_effect import DurationEffect
 
 class SlashingCriticalEffect(DurationEffect):
   def execute(self, diff):
-    print('doin it')
     trigger = self.get_trigger()
     key = trigger.get('key')
     trigger.update(key, lambda roll: (roll[0], roll[1] - 3))

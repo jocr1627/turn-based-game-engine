@@ -1,8 +1,8 @@
 from engine.action import Phases
-from engine.listener import Listener
+from engine.base_entity_listener import BaseEntityListener
 from examples.go_fish.actions.request import Request
 
-class UserInputRequest(Listener):
+class UserInputRequest(BaseEntityListener):
   def execute(self, diff):
     print(self.parent.get('hand'))
     rank = None
@@ -18,7 +18,7 @@ class UserInputRequest(Listener):
       except ValueError:
         print(f'{input_value} is not a valid rank')
 
-    player_ids = self.root.get('player_ids')
+    player_ids = self.game.get('player_ids')
     other_player_ids = [player_id for player_id in player_ids if player_id != self.parent.id]
     is_target_found = False
 
@@ -38,8 +38,8 @@ class UserInputRequest(Listener):
 
   def get_is_valid(self, diff):
     return (
-      self.parent.id is self.root.get('active_player_id')
-      and self.root.get('is_in_progress')
+      self.parent.id is self.game.get('active_player_id')
+      and self.game.get('is_in_progress')
     )
 
   def get_should_react(self, diff):
@@ -48,5 +48,5 @@ class UserInputRequest(Listener):
     return (
       trigger.phase is Phases.EXECUTION
       and trigger.get_name() is 'StartTurn'
-      and self.parent.id is self.root.get('active_player_id')
+      and self.parent.id is self.game.get('active_player_id')
     )

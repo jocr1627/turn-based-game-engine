@@ -1,15 +1,14 @@
 class ActionStack:
   def __init__(self, stack=[]):
-    self.map = {}
+    self.ids_to_keys = {}
+    self.keys_to_ids = {}
     self.stack = []
 
     for action in stack:
       self.push(action)
 
   def __contains__(self, action):
-    key = self.get_key(action)
-
-    return key in self.map and action.id in self.map[key]
+    return action in self.stack
   
   def __getitem__(self, key):
     return self.stack[key]
@@ -24,24 +23,27 @@ class ActionStack:
     return (name, parent_id)
   
   def is_cycle(self, action):
-    return self.get_key(action) in self.map
+    return self.get_key(action) in self.keys_to_ids
 
   def pop(self):
     action = self.stack.pop()
-    key = self.get_key(action)
+    key = self.ids_to_keys[action.id]
 
-    self.map[key].remove(action.id)
+    self.keys_to_ids[key].remove(action.id)
 
-    if len(self.map[key]) == 0:
-      del self.map[key]
+    if len(self.keys_to_ids[key]) == 0:
+      del self.keys_to_ids[key]
+    
+    del self.ids_to_keys[action.id]
 
     return action
 
   def push(self, action):
     key = self.get_key(action)
 
-    if key not in self.map:
-      self.map[key] = set()
+    if key not in self.keys_to_ids:
+      self.keys_to_ids[key] = set()
     
-    self.map[key].add(action.id)
+    self.keys_to_ids[key].add(action.id)
+    self.ids_to_keys[action.id] = key
     self.stack.append(action)

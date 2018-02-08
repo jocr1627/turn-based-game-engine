@@ -1,9 +1,8 @@
-from engine.base_listener import BaseListener
+from engine.base_entity_listener import BaseEntityListener
 
-class SelfTerminate(BaseListener):
+class SelfTerminate(BaseEntityListener):
   def resolve(self, diff):
-    print('doing it', self.parent.get_name())
-    self.parent.remove_child(self)
+    self.parent.parent.remove_child(self.parent)
 
   def get_should_react(self, diff):
     return self.parent.get_should_terminate(diff)

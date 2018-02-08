@@ -67,6 +67,7 @@ class Character(Entity):
       'name': name,
       'weapon_id': weapon_id
     }
+
     super().__init__(children=children, parent=location, state=state)
 
   def get_default_children(self):

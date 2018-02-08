@@ -1,7 +1,7 @@
 from engine.action import Phases
-from engine.listener import Listener
+from engine.base_entity_listener import BaseEntityListener
 
-class SetTargetCharacter(Listener):
+class SetTargetCharacter(BaseEntityListener):
   def execute(self, diff):
     trigger = self.get_trigger()
     target_character_ids = trigger.get('target_character_ids')

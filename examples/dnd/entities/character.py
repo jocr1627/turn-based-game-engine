@@ -25,7 +25,7 @@ class Character(Entity):
   def __init__(
     self,
     name,
-    abilities=[],
+    abilities={},
     armor=None,
     attributes={},
     default_weapon=Fists(),
@@ -51,6 +51,7 @@ class Character(Entity):
     max_hp = max_hp if max_hp is not None else get_max_hp(level, constitution, is_health_based)
     willpower = attributes['willpower'] if 'willpower' in attributes else 0
     max_mp = max_mp if max_mp is not None else get_max_mp(willpower, is_health_based)
+    passive_ability_ids = [ability.id for ability in passive_abilities]
     weapon_id = weapon.id if weapon is not None else None
     state = {
       'abilities': abilities,
@@ -65,6 +66,7 @@ class Character(Entity):
       'max_mp': max_mp,
       'mp': max_mp,
       'name': name,
+      'passive_ability_ids': passive_ability_ids,
       'weapon_id': weapon_id
     }
 
@@ -81,6 +83,7 @@ class Character(Entity):
   
   def get_default_getters(self):
     return {
+      'critical_factor': self.get_critical_factor,
       'is_critical': self.get_is_critical,
       'is_flanking': self.get_is_flanking,
       'plan_action_class_name': self.get_plan_action_class_name,
@@ -94,13 +97,13 @@ class Character(Entity):
   
   def get_default_state(self):
     return {
-      'abilities': [
-        'PlanAdvance',
-        'PlanAttack',
-        'PlanEquip',
-        'PlanFlee',
-        'PlanMove'
-      ],
+      'abilities': {
+        'PlanAdvance': {},
+        'PlanAttack': {},
+        'PlanEquip': {},
+        'PlanFlee': {},
+        'PlanMove': {},
+      },
       'armor_id': None,
       'attributes': {
         'charisma': 0,
@@ -121,10 +124,14 @@ class Character(Entity):
       'max_mp': 0,
       'mp': 0,
       'name': self.get_name(),
+      'passive_ability_ids': [],
       'planned_action_id': None,
       'target_character_id': None,
       'weapon_id': None
     }
+
+  def get_critical_factor(self, args):
+    return 2
   
   def get_is_critical(self, args):
     critical_chance = self.get('critical_chance')
@@ -140,7 +147,9 @@ class Character(Entity):
     return target_id_of_target is not self.id
   
   def get_plan_action_class_name(self, args):
-    return random.choice(['PlanAttack', 'PlanAdvance', 'PlanMove', 'PlanFlee'])
+    abilities = self.get('abilities')
+
+    return random.choice(list(abilities.keys()))
 
   def get_physical_defense_modifier(self, args):
     armor = self.hydrate('armor_id')
@@ -178,9 +187,9 @@ class Character(Entity):
   def get_weapon_damage(self, args):
     weapon = self.get_weapon()
     damage_modifier = weapon.get('damage_modifier')
-    damage = args['roll'] + damage_modifier
-
+    damage = (args['roll'] + damage_modifier)
+    
     if args['is_critical']:
-      damage *= 2
+      damage *= args['critical_factor']
 
-    return damage
+    return round(damage)

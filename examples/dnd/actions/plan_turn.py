@@ -21,6 +21,8 @@ class PlanTurn(Action):
     action_class_name = request(self, self.parent, 'plan_action_class_name')
 
     if action_class_name is not None:
+      abilities = self.parent.get('abilities')
       action_class = plan_class_map[action_class_name]
-      action = action_class(parent=self.parent)
+      action_config = abilities[action_class_name]
+      action = action_class(parent=self.parent, **action_config)
       action.resolve()

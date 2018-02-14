@@ -1,13 +1,16 @@
 import cProfile
 import sys
 from examples.dnd.dnd import DnD
-from examples.dnd.actions.weapon_focus  import WeaponFocus
+from examples.dnd.actions.blunt_weapon_focus  import BluntWeaponFocus
+from examples.dnd.actions.piercing_weapon_focus  import PiercingWeaponFocus
+from examples.dnd.actions.slashing_weapon_focus  import SlashingWeaponFocus
 from examples.dnd.entities.character import Character
 from examples.dnd.entities.location import Location
 from examples.dnd.entities.player import Player as DndPlayer
 from examples.dnd.entities.armor.iron_armor import IronArmor
 from examples.dnd.entities.armor.robe import Robe
 from examples.dnd.entities.weapons.stone_sword import StoneSword
+from examples.dnd.entities.weapons.wooden_spear import WoodenSpear
 from examples.go_fish.go_fish import GoFish
 from examples.go_fish.actions.draw_hand import DrawHand
 from examples.go_fish.actions.end_turn import EndTurn
@@ -76,7 +79,7 @@ def dnd():
       },
       'name': 'Nigel',
       'location': bar,
-      'passive_abilities': [WeaponFocus()],
+      'passive_abilities': [SlashingWeaponFocus()],
       'weapon': StoneSword()
     },
     {
@@ -88,7 +91,8 @@ def dnd():
       },
       'name': 'John',
       'location': bar,
-      'weapon': StoneSword()
+      'passive_abilities': [PiercingWeaponFocus()],
+      'weapon': WoodenSpear()
     }
   ]
   characters = [DndPlayer(**config) for config in character_configs]

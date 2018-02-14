@@ -1,3 +1,4 @@
 class AttackTypes:
   BLUNT = 'BLUNT'
+  PIERCING = 'PIERCING'
   SLASHING = 'SLASHING'

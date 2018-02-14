@@ -24,7 +24,8 @@ class Attack(Action):
       base_damage_roll,modified_damage_roll = request(self, self.parent, 'roll', args=damage_roll_args)
       is_critical_args = args={ 'base_roll': base_roll, 'target_character_ids': [target_character.id] }
       is_critical = request(self, self.parent, 'is_critical', args=is_critical_args)
-      weapon_damage_args = { 'action_id': self.id, 'is_critical': is_critical, 'roll': modified_damage_roll }
+      critical_factor = request(self, self.parent, 'critical_factor')
+      weapon_damage_args = { 'action_id': self.id, 'critical_factor': critical_factor, 'is_critical': is_critical, 'roll': modified_damage_roll }
       damage = request(self, self.parent, 'weapon_damage', args=weapon_damage_args)
       deal_damage = DealDamage(parent=target_character, state={ 'damage': damage })
       deal_damage.resolve()

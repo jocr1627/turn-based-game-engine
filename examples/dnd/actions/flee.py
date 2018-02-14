@@ -17,7 +17,7 @@ class Flee(Action):
 
     if flee_location is not current_location:
       flee_location.add_child(self.parent)
-      print(f'{name} fleed from {target_character_name} to {flee_location_name}.')
+      print(f'{name} fled from {target_character_name} to {flee_location_name}.')
     else:
       print(f'{name} stayed put.')
     

@@ -27,5 +27,5 @@ class SlashingWeaponFocus(BaseEntityListener):
       and key is 'is_critical'
       and trigger.get(key) is True
       and trigger.parent is self.parent
-      and requestor.parent.get_weapon().get('attack_type') is AttackTypes.SLASHING
+      and requestor.hydrate('weapon_id').get('attack_type') is AttackTypes.SLASHING
     )

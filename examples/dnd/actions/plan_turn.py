@@ -5,6 +5,7 @@ from examples.dnd.actions.plan_attack import PlanAttack
 from examples.dnd.actions.plan_equip import PlanEquip
 from examples.dnd.actions.plan_flee import PlanFlee
 from examples.dnd.actions.plan_move import PlanMove
+from examples.dnd.actions.plan_rest import PlanRest
 from examples.dnd.priorities import Priorities
 
 plan_classes = [
@@ -12,7 +13,8 @@ plan_classes = [
   PlanAttack,
   PlanEquip,
   PlanFlee,
-  PlanMove
+  PlanMove,
+  PlanRest
 ]
 plan_class_map = { clazz.get_name(): clazz for clazz in plan_classes }
 

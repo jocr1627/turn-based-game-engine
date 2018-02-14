@@ -7,11 +7,15 @@ text_to_abilities = {
   r'equip': 'PlanEquip',
   r'flee': 'PlanFlee',
   r'idle': None,
-  r'move': 'PlanMove'
+  r'move': 'PlanMove',
+  r'rest': 'PlanRest'
 }
 
 class Player(Character):
   def get_plan_action_class_name(self, args):
+    if self.get('mp') == 0:
+      return 'PlanRest'
+
     abilities = self.get('abilities')
     name = self.get('name')
     action_class_name = None

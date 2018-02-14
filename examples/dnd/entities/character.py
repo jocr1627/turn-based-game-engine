@@ -1,8 +1,6 @@
 import random
 from engine.entity import Entity
 from engine.request import request
-from examples.dnd.actions.plan_attack import PlanAttack
-from examples.dnd.actions.plan_turn import PlanTurn
 from examples.dnd.actions.set_target_character import SetTargetCharacter
 from examples.dnd.actions.take_turn import TakeTurn
 from examples.dnd.actions.update_critical_chance_by_guile import UpdateCriticalChanceByGuile
@@ -103,6 +101,7 @@ class Character(Entity):
         'PlanEquip': {},
         'PlanFlee': {},
         'PlanMove': {},
+        'PlanRest': {},
       },
       'armor_id': None,
       'attributes': {
@@ -147,6 +146,9 @@ class Character(Entity):
     return target_id_of_target is not self.id
   
   def get_plan_action_class_name(self, args):
+    if self.get('mp') == 0:
+      return 'PlanRest'
+    
     abilities = self.get('abilities')
 
     return random.choice(list(abilities.keys()))
@@ -173,7 +175,8 @@ class Character(Entity):
     return self.hydrate('weapon_id') if self.get('weapon_id') is not None else self.hydrate('default_weapon_id')
 
   def get_weapon_attack_modifier(self, args):
-    weapon = self.get_weapon()
+    weapon_id = args['weapon_id']
+    weapon = self.hydrate_by_id(weapon_id)
     weapon_attribute_caps = weapon.get('attribute_caps')
     attributes = self.get('attributes')
     weapon_attack_modifier = weapon.get('attack_modifier')
@@ -185,7 +188,8 @@ class Character(Entity):
     return weapon_attack_modifier
 
   def get_weapon_damage(self, args):
-    weapon = self.get_weapon()
+    weapon_id = args['weapon_id']
+    weapon = self.hydrate_by_id(weapon_id)
     damage_modifier = weapon.get('damage_modifier')
     damage = (args['roll'] + damage_modifier)
     

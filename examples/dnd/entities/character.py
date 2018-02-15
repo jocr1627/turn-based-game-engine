@@ -122,6 +122,7 @@ class Character(Entity):
       'default_weapon_id': None,
       'hp': 1,
       'inventory': [],
+      'is_alive': True,
       'level': 1,
       'max_hp': 1,
       'max_mp': 0,

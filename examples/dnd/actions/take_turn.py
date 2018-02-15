@@ -8,7 +8,10 @@ class TakeTurn(BaseEntityListener):
     planned_action.resolve()
     
   def get_is_valid(self, diff):
-    return self.parent.hydrate('planned_action_id') is not None
+    return (
+      self.parent.hydrate('planned_action_id') is not None
+      and self.parent.get('is_alive')
+    )
 
   def get_priority(self):
     planned_action = self.parent.hydrate('planned_action_id')

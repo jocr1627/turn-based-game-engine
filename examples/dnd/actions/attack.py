@@ -33,10 +33,10 @@ class Attack(Action):
       print(f'{target_character_name} successfully defended against {name}\'s Attack.')
 
   def get_default_state(self):
-    return { 'base_roll': None, 'modified_roll': None, 'score': None, 'target_character_id': None }
+    return { 'base_roll': None, 'modified_roll': None, 'score': None, 'target_character_id': None, 'weapon_id': None }
 
   def get_is_valid(self, diff):
-    return self.hydrate('target_character_id').parent is self.parent.parent
+    return not self.hydrate('weapon_id').get('is_ranged') or not self.parent.get('has_taken_damage')
 
   def get_priority(self):
     score = self.get('score')

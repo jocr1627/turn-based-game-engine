@@ -1,6 +1,9 @@
 
 from engine.game import Game
+from examples.dnd.actions.end_round import EndRound
 from examples.dnd.actions.plan_phase import PlanPhase
+from examples.dnd.actions.resolve_phase import ResolvePhase
+from examples.dnd.actions.start_round import StartRound
 
 class DnD(Game):
   def __init__(self, characters, regions):
@@ -10,9 +13,16 @@ class DnD(Game):
 
     super().__init__(children=regions, state=state)
 
-  def end_round(self):
-    if self.get('round_number') == 5:
-      self.set('is_in_progress', False)
+  def run(self):
+    self.set('is_in_progress', True)
+    self.set('round_number', 0)
 
-  def get_default_children(self):
-    return [PlanPhase()]
+    while self.get('is_in_progress'):
+      start_round = StartRound(parent=self)
+      start_round.resolve()
+      plan_phase = PlanPhase(parent=self)
+      plan_phase.resolve()
+      resolve_phase = ResolvePhase(parent=self)
+      resolve_phase.resolve()
+      end_round = EndRound(parent=self)
+      end_round.resolve()

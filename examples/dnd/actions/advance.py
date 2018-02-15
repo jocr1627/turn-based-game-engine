@@ -21,5 +21,8 @@ class Advance(Action):
     else:
       print(f'{name} stayed put.')
 
-  def get_priority(self):
+  def get_initiative(self):
     return Priorities.ADVANCE
+
+  def get_is_valid(self, diff):
+    return self.parent.get('is_alive')

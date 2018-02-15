@@ -9,5 +9,8 @@ class Move(Action):
     target_location_name = target_location.get('name')
     print(f'{name} moved to {target_location_name}.')
 
-  def get_priority(self):
+  def get_initiative(self):
     return Priorities.NO_ROLL_ACTION
+
+  def get_is_valid(self, diff):
+    return self.parent.get('is_alive')

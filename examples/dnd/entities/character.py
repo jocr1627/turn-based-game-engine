@@ -4,7 +4,6 @@ from engine.request import request
 from examples.dnd.actions.clear_interrupt import ClearInterrupt
 from examples.dnd.actions.interrupt import Interrupt
 from examples.dnd.actions.set_target_character import SetTargetCharacter
-from examples.dnd.actions.take_turn import TakeTurn
 from examples.dnd.actions.update_critical_chance_by_guile import UpdateCriticalChanceByGuile
 from examples.dnd.actions.update_max_hp_by_constitution import UpdateMaxHpByConstitution
 from examples.dnd.actions.update_max_mp_by_willpower import UpdateMaxMpByWillpower
@@ -79,8 +78,7 @@ class Character(Entity):
       UpdateCriticalChanceByGuile(),
       UpdateMaxHpByConstitution(),
       UpdateMaxMpByWillpower(),
-      SetTargetCharacter(),
-      TakeTurn(),
+      SetTargetCharacter()
     ]
   
   def get_default_getters(self):

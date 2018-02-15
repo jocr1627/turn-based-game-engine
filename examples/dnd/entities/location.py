@@ -1,8 +1,8 @@
 from engine.entity import Entity
 
 class Location(Entity):
-  def __init__(self, name, neighbors=[]):
-    super().__init__(state={ 'name': name })
+  def __init__(self, name, children=[], neighbors=[]):
+    super().__init__(children=children, state={ 'name': name })
 
     for neighbor in neighbors:
       self.add_edge(neighbor)

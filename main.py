@@ -7,8 +7,10 @@ from examples.dnd.actions.slashing_weapon_focus  import SlashingWeaponFocus
 from examples.dnd.entities.character import Character
 from examples.dnd.entities.location import Location
 from examples.dnd.entities.player import Player as DndPlayer
+from examples.dnd.entities.region import Region
 from examples.dnd.entities.armor.iron_armor import IronArmor
 from examples.dnd.entities.armor.robe import Robe
+from examples.dnd.entities.weapons.elven_bow import ElvenBow
 from examples.dnd.entities.weapons.stone_sword import StoneSword
 from examples.dnd.entities.weapons.wooden_spear import WoodenSpear
 from examples.go_fish.go_fish import GoFish
@@ -60,14 +62,14 @@ def go_fish():
 
 def dnd():
   bar = Location('bar')
-  door = Location('door', [bar])
-  stairs = Location('stairs', [bar])
-  upstairs = Location('upstairs', [stairs])
-  locations = [
-    bar,
-    door,
-    stairs,
-    upstairs
+  door = Location('door', neighbors=[bar])
+  stairs = Location('stairs', neighbors=[bar])
+  ground_floor = Region('ground floor', locations=[bar, door, stairs])
+  upstairs = Location('upstairs', neighbors=[stairs])
+  top_floor = Region('top floor', locations=[upstairs])
+  regions = [
+    ground_floor,
+    top_floor
   ]
   character_configs = [
     {
@@ -92,11 +94,22 @@ def dnd():
       'name': 'John',
       'location': bar,
       'passive_abilities': [PiercingWeaponFocus()],
+      'weapon': ElvenBow()
+    },
+    {
+      'armor': IronArmor(),
+      'attributes': {
+        'constitution': 2,
+        'strength': 2
+      },
+      'name': 'Orc',
+      'location': upstairs,
+      'passive_abilities': [PiercingWeaponFocus()],
       'weapon': WoodenSpear()
     }
   ]
   characters = [DndPlayer(**config) for config in character_configs]
-  game = DnD(characters, locations)
+  game = DnD(characters, regions)
   game.run()
 
 game_name = sys.argv[1] if len(sys.argv) > 1 else None

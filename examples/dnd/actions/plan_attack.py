@@ -1,10 +1,16 @@
-from engine.action import Action
 from engine.request import request
 from examples.dnd.actions.attack import Attack
 from examples.dnd.actions.finalize_attack import FinalizeAttack
+from examples.dnd.actions.plan import Plan
 from examples.dnd.entities.character import Character
+from examples.dnd.utils.get_characters_in_range import get_characters_in_range
 
-class PlanAttack(Action):
+class PlanAttack(Plan):
+  def get_is_possible(character):
+    max_range = -1 if character.get_weapon().get('is_ranged') else 0
+
+    return len(get_characters_in_range(character.parent, max_range)) > 0
+
   def execute(self, diff):
     weapon = self.parent.get_weapon()
     attack = Attack(parent=self.parent, state={ 'weapon_id': weapon.id })

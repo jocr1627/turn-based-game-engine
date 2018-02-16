@@ -1,8 +1,8 @@
-from engine.action import Action
 from examples.dnd.actions.equip import Equip
+from examples.dnd.actions.plan import Plan
 from examples.dnd.entities.weapons.weapon import Weapon
 
-class PlanEquip(Action):
+class PlanEquip(Plan):
   def execute(self, diff):
     name = self.parent.get('name')
     equip = Equip(parent=self.parent)

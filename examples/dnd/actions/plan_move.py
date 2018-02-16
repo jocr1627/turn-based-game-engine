@@ -1,8 +1,11 @@
-from engine.action import Action
 from engine.request import request
 from examples.dnd.actions.move import Move
+from examples.dnd.actions.plan import Plan
 
-class PlanMove(Action):
+class PlanMove(Plan):
+  def get_is_possible(character):
+    return len(character.parent.get('neighbor_ids')) > 0
+
   def execute(self, diff):
     move = Move(parent=self.parent)
     neighbor_ids = list(self.parent.parent.get('neighbor_ids'))

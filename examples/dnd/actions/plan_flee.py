@@ -1,9 +1,13 @@
-from engine.action import Action
 from engine.request import request
 from examples.dnd.actions.flee import Flee
+from examples.dnd.actions.plan import Plan
 from examples.dnd.entities.character import Character
+from examples.dnd.utils.get_characters_in_range import get_characters_in_range
 
-class PlanFlee(Action):
+class PlanFlee(Plan):
+  def get_is_possible(character):
+    return len(get_characters_in_range(character.parent, 1)) > 0
+
   def execute(self, diff):
     flee = Flee(parent=self.parent)
     valid_locations = [self.parent.parent]

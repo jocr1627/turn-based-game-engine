@@ -1,12 +1,22 @@
+from itertools import groupby
 import random
-from engine.entity import Entity
 from engine.request import request
 from examples.dnd.actions.clear_interrupt import ClearInterrupt
+from examples.dnd.actions.enforce_rest import EnforceRest
 from examples.dnd.actions.interrupt import Interrupt
 from examples.dnd.actions.set_target_character import SetTargetCharacter
 from examples.dnd.actions.update_critical_chance_by_guile import UpdateCriticalChanceByGuile
 from examples.dnd.actions.update_max_hp_by_constitution import UpdateMaxHpByConstitution
 from examples.dnd.actions.update_max_mp_by_willpower import UpdateMaxMpByWillpower
+from examples.dnd.entities.ability import Ability
+from examples.dnd.entities.advance import Advance
+from examples.dnd.entities.attack import Attack
+from examples.dnd.entities.base_character import BaseCharacter
+from examples.dnd.entities.equip import Equip
+from examples.dnd.entities.flee import Flee
+from examples.dnd.entities.idle import Idle
+from examples.dnd.entities.move import Move
+from examples.dnd.entities.rest import Rest
 from examples.dnd.entities.weapons.fists import Fists
 from examples.dnd.utils.roll import roll
 
@@ -20,11 +30,11 @@ def get_max_mp(willpower, is_health_based):
 
   return base_mana + willpower
 
-class Character(Entity):
+class Character(BaseCharacter):
   def __init__(
     self,
     name,
-    abilities={},
+    abilities=[],
     armor=None,
     attributes={},
     default_weapon=Fists(),
@@ -34,10 +44,28 @@ class Character(Entity):
     location=None,
     max_hp=None,
     max_mp=None,
-    passive_abilities=[],
     weapon=None
   ):
-    children = inventory + passive_abilities + [default_weapon]
+    abilities = self.get_default_abilities() + abilities
+    abilities_map = {}
+
+    for ability_name,abilities in groupby(abilities, key=lambda ability: ability.get_name()):
+      abilities = list(abilities)
+
+      if len(abilities) > 1:
+        print(f'Warning: More than 1 {ability_name} ability was specified. Defaulting to last value.')
+  
+      abilities_map[ability_name] = abilities[-1]
+
+    children = list(abilities_map.values()) + inventory  + [default_weapon]
+    ability_ids_map = {
+      ability_name: ability.id for ability_name,ability in abilities_map.items()
+      if isinstance(ability, Ability)
+    }
+    passive_ability_ids_map = {
+      ability_name: ability.id for ability_name,ability in abilities_map.items()
+      if not isinstance(ability, Ability)
+    }
 
     if armor is not None:
       children.append(armor)
@@ -50,10 +78,9 @@ class Character(Entity):
     max_hp = max_hp if max_hp is not None else get_max_hp(level, constitution, is_health_based)
     willpower = attributes['willpower'] if 'willpower' in attributes else 0
     max_mp = max_mp if max_mp is not None else get_max_mp(willpower, is_health_based)
-    passive_ability_ids = [ability.id for ability in passive_abilities]
     weapon_id = weapon.id if weapon is not None else None
     state = {
-      'abilities': abilities,
+      'abilities': ability_ids_map,
       'armor_id': armor_id,
       'attributes': attributes,
       'critical_chance': min(0.05 * (1 + guile), 1),
@@ -65,15 +92,27 @@ class Character(Entity):
       'max_mp': max_mp,
       'mp': max_mp,
       'name': name,
-      'passive_ability_ids': passive_ability_ids,
+      'passive_abilities': passive_ability_ids_map,
       'weapon_id': weapon_id
     }
 
     super().__init__(children=children, parent=location, state=state)
 
+  def get_default_abilities(self):
+    return [
+      Advance(),
+      Attack(),
+      Equip(),
+      Flee(),
+      Idle(),
+      Move(),
+      Rest()
+    ]
+
   def get_default_children(self):
     return [
       ClearInterrupt(),
+      EnforceRest(),
       Interrupt(),
       UpdateCriticalChanceByGuile(),
       UpdateMaxHpByConstitution(),
@@ -83,10 +122,10 @@ class Character(Entity):
   
   def get_default_getters(self):
     return {
+      'ability_id': self.get_ability_id,
       'critical_factor': self.get_critical_factor,
       'is_critical': self.get_is_critical,
       'is_flanking': self.get_is_flanking,
-      'plan_action_class_name': self.get_plan_action_class_name,
       'physical_defense_modifier': self.get_physical_defense_modifier,
       'roll': self.get_roll,
       'target_character_ids': self.get_target_character_ids,
@@ -97,14 +136,8 @@ class Character(Entity):
   
   def get_default_state(self):
     return {
-      'abilities': {
-        'PlanAdvance': {},
-        'PlanAttack': {},
-        'PlanEquip': {},
-        'PlanFlee': {},
-        'PlanMove': {},
-        'PlanRest': {},
-      },
+      'abilities': {},
+      'active_ability_id': None,
       'armor_id': None,
       'attributes': {
         'charisma': 0,
@@ -126,11 +159,18 @@ class Character(Entity):
       'max_mp': 0,
       'mp': 0,
       'name': self.get_name(),
-      'passive_ability_ids': [],
-      'planned_action_id': None,
+      'passive_abilities': {},
       'target_character_id': None,
       'weapon_id': None
     }
+
+  def get_ability_id(self, args):
+    ability_ids = [
+      ability.id for ability in self.hydrate('abilities').values()
+      if ability.get_is_possible(self)
+    ]
+
+    return random.choice(ability_ids)
 
   def get_critical_factor(self, args):
     return 2
@@ -147,14 +187,6 @@ class Character(Entity):
     target_id_of_target = target_character.get('target_character_id')
 
     return target_id_of_target is not self.id
-  
-  def get_plan_action_class_name(self, args):
-    if self.get('mp') == 0:
-      return 'PlanRest'
-    
-    abilities = self.get('abilities')
-
-    return random.choice(list(abilities.keys()))
 
   def get_physical_defense_modifier(self, args):
     armor = self.hydrate('armor_id')
@@ -178,8 +210,7 @@ class Character(Entity):
     return self.hydrate('weapon_id') if self.get('weapon_id') is not None else self.hydrate('default_weapon_id')
 
   def get_weapon_attack_modifier(self, args):
-    weapon_id = args['weapon_id']
-    weapon = self.hydrate_by_id(weapon_id)
+    weapon = self.get_weapon()
     weapon_attribute_caps = weapon.get('attribute_caps')
     attributes = self.get('attributes')
     weapon_attack_modifier = weapon.get('attack_modifier')
@@ -191,8 +222,7 @@ class Character(Entity):
     return weapon_attack_modifier
 
   def get_weapon_damage(self, args):
-    weapon_id = args['weapon_id']
-    weapon = self.hydrate_by_id(weapon_id)
+    weapon = self.get_weapon()
     damage_modifier = weapon.get('damage_modifier')
     damage = (args['roll'] + damage_modifier)
     

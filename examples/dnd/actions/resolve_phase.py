@@ -1,3 +1,5 @@
+import random
+import re
 from engine.action import Action, Phases
 from examples.dnd.entities.player import Player
 
@@ -13,8 +15,14 @@ def sort_tied_actions(actions):
   sorted_actions = None
 
   while sorted_actions is None:
-    string_input = input('Enter action resolution order by id: ').split(',')
-    string_input = [value for value in string_input if len(value) > 0]
+    string_input = input('Enter action resolution order by id ("skip" for random): ')
+    
+    if re.match(r's(kip)?', string_input):
+      random.shuffle(actions)
+      sorted_actions = actions
+      break
+    
+    string_input = [value for value in string_input.split(',') if len(value) > 0]
     num_input = len(string_input)
 
     if num_input != num_actions:
@@ -50,15 +58,15 @@ class ResolvePhase(Action):
     actions_by_initiative = {}
 
     for character in self.game.hydrate('character_ids'):
-      planned_action = character.hydrate('planned_action_id')
+      ability = character.hydrate('active_ability_id')
 
-      if planned_action is not None:
-        initiative = planned_action.get_initiative()
+      if ability is not None:
+        initiative = ability.get_initiative()
 
         if initiative not in actions_by_initiative:
           actions_by_initiative[initiative] = []
         
-        actions_by_initiative[initiative].append(planned_action)
+        actions_by_initiative[initiative].append(ability)
 
     actions_by_initiative = sorted(actions_by_initiative.items(), key=lambda item: item[0], reverse=True)
     action_queue = []

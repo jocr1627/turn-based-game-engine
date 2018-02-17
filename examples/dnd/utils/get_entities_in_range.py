@@ -1,6 +1,4 @@
-from examples.dnd.entities.character import Character
-
-def get_characters_in_range(reference_location, max_range):
+def get_entities_in_range(reference_location, max_range=0, filter_fn=lambda entity: True):
   region = reference_location.parent
   stack = [(reference_location, 0)]
   valid_locations = set()
@@ -21,8 +19,7 @@ def get_characters_in_range(reference_location, max_range):
 
   for location in valid_locations:
     valid_character_ids += [
-      entity.id for entity in location.children.values()
-      if isinstance(entity, Character) and entity is not character
+      entity.id for entity in location.children.values() if filter_fn(entity)
     ]
 
   return valid_character_ids

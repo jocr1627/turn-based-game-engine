@@ -1,7 +1,8 @@
 
 from engine.game import Game
 from examples.dnd.actions.end_round import EndRound
-from examples.dnd.actions.plan_phase import PlanPhase
+from examples.dnd.actions.finalize_phase import FinalizePhase
+from examples.dnd.actions.prepare_phase import PreparePhase
 from examples.dnd.actions.resolve_phase import ResolvePhase
 from examples.dnd.actions.start_round import StartRound
 
@@ -20,8 +21,10 @@ class DnD(Game):
     while self.get('is_in_progress'):
       start_round = StartRound(parent=self)
       start_round.resolve()
-      plan_phase = PlanPhase(parent=self)
-      plan_phase.resolve()
+      prepare_phase = PreparePhase(parent=self)
+      prepare_phase.resolve()
+      finalize_phase = FinalizePhase(parent=self)
+      finalize_phase.resolve()
       resolve_phase = ResolvePhase(parent=self)
       resolve_phase.resolve()
       end_round = EndRound(parent=self)

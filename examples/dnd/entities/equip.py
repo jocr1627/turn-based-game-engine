@@ -1,16 +1,15 @@
-from examples.dnd.actions.equip import Equip
-from examples.dnd.actions.plan import Plan
-from examples.dnd.entities.weapons.weapon import Weapon
+from engine.action import Action
+from examples.dnd.entities.ability import Ability
+from examples.dnd.priorities import Priorities
 
-class PlanEquip(Plan):
+class PrepareEquip(Action):
   def execute(self, diff):
-    name = self.parent.get('name')
-    equip = Equip(parent=self.parent)
-    inventory = self.parent.hydrate('inventory')
+    name = self.parent.parent.get('name')
+    inventory = self.parent.parent.hydrate('inventory')
     inventory_weapons = [item for item in inventory if isinstance(item, Weapon)]
     location_weapons = []
 
-    for child in self.parent.parent.children.values():
+    for child in self.parent.parent.parent.children.values():
       if isinstance(child, Weapon):
         location_weapons.append(child)
 
@@ -50,5 +49,31 @@ class PlanEquip(Plan):
         except ValueError:
           print(f'{weapon_id} is not a valid id. Try again.')
 
-    equip.set('weapon_id', weapon.id)
-    self.parent.set('active_ability_id', equip.id)
+    resolve_args = { 'weapon_id', weapon.id }
+    self.parent.set('resolve_args', resolve_args)
+
+class ResolveEquip(Action):
+  def execute(self, diff):
+    name = self.parent.parent.get('name')
+    weapon = self.hydrate('weapon_id')
+    weapon_id = weapon.id if weapon is not None else None
+    weapon_name = weapon.get('name') if weapon is not None else 'nothing'
+    self.parent.parent.set('weapon_id', weapon_id)
+    print(f'{name} equipped {weapon_name}.')
+
+  def get_is_valid(self, diff):
+    return self.parent.parent.get('is_alive')
+
+class Equip(Ability):
+  matcher = r'equip'
+
+  def get_initiative(self):
+    return Priorities.NO_ROLL_ACTION
+
+  def prepare(self):
+    prepare_equip = PrepareEquip(parent=self)
+    prepare_equip.resolve()
+
+  def resolve(self):
+    resolve_equip = ResolveEquip(parent=self, state={ 'resolve_args': self.get('resolve_args') })
+    resolve_equip.resolve()

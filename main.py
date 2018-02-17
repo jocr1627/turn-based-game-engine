@@ -73,6 +73,7 @@ def dnd():
   ]
   character_configs = [
     {
+      'abilities': [SlashingWeaponFocus()],
       'armor': Robe(),
       'attributes': {
         'constitution': 1,
@@ -81,10 +82,10 @@ def dnd():
       },
       'name': 'Nigel',
       'location': bar,
-      'passive_abilities': [SlashingWeaponFocus()],
       'weapon': StoneSword()
     },
     {
+      'abilities': [PiercingWeaponFocus()],
       'armor': IronArmor(),
       'attributes': {
         'constitution': 1,
@@ -93,10 +94,10 @@ def dnd():
       },
       'name': 'John',
       'location': bar,
-      'passive_abilities': [PiercingWeaponFocus()],
       'weapon': ElvenBow()
     },
     {
+      'abilities': [PiercingWeaponFocus()],
       'armor': IronArmor(),
       'attributes': {
         'constitution': 2,
@@ -104,7 +105,6 @@ def dnd():
       },
       'name': 'Orc',
       'location': upstairs,
-      'passive_abilities': [PiercingWeaponFocus()],
       'weapon': WoodenSpear()
     }
   ]

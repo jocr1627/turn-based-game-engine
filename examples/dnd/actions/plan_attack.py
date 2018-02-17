@@ -40,4 +40,4 @@ class PlanAttack(Plan):
     attack.set('base_roll', base_roll)
     attack.set('modified_roll', modified_roll)
     FinalizeAttack(parent=self.parent, state={ 'attack_id': attack.id })
-    self.parent.set('planned_action_id', attack.id)
+    self.parent.set('active_ability_id', attack.id)

@@ -92,7 +92,19 @@ class Entity:
     if self.game is None:
       raise Exception(f'Cannot hydrate values when game is unassigned: {self.get_name()} {self.id}')
 
-    if type(id_or_ids) is list or type(id_or_ids) is set:
+    if type(id_or_ids) is dict:
+      hydrated_dict = {}
+
+      for key,entity_id in id_or_ids.items():
+        entity = None
+
+        if entity_id in self.game.descendants:
+          entity = self.game.descendants[entity_id]
+        
+        hydrated_dict[key] = entity
+      
+      return hydrated_dict
+    elif type(id_or_ids) is list or type(id_or_ids) is set:
       hydrated_values = []
 
       for entity_id in id_or_ids:

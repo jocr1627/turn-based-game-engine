@@ -17,4 +17,4 @@ class PlanAdvance(Plan):
     target_character = self.hydrate_by_id(target_character_id)
     advance.set('target_character_id', target_character_id)
     advance.set('original_target_location_id', target_character.parent.id)
-    self.parent.set('planned_action_id', advance.id)
+    self.parent.set('active_ability_id', advance.id)

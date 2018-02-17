@@ -13,4 +13,4 @@ class PlanMove(Plan):
     target_location_ids = request(self, self.parent, 'target_location_ids', args=target_location_id_args)
     target_location_id = target_location_ids[0] if len(target_location_ids) > 0 else None
     move.set('target_location_id', target_location_id)
-    self.parent.set('planned_action_id', move.id)
+    self.parent.set('active_ability_id', move.id)

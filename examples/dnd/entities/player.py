@@ -1,47 +1,31 @@
 import re
 from examples.dnd.entities.character import Character
 
-text_to_abilities = {
-  r'advance': 'PlanAdvance',
-  r'attack': 'PlanAttack',
-  r'equip': 'PlanEquip',
-  r'flee': 'PlanFlee',
-  r'idle': None,
-  r'move': 'PlanMove',
-  r'rest': 'PlanRest'
-}
-
 class Player(Character):
-  def get_plan_action_class_name(self, args):
-    if self.get('mp') == 0:
-      return 'PlanRest'
-
-    abilities = self.get('abilities')
+  def get_ability_id(self, args):
+    abilities = self.hydrate('abilities')
     name = self.get('name')
-    action_class_name = None
-    is_action_found = False
+    ability_id = None
 
-    while not is_action_found:
+    while ability_id is None:
       action_name = input(f'Enter an action for player {name}: ').lower()
       is_match_found = False
 
-      for matcher in text_to_abilities:
-        if re.match(matcher, action_name):
+      for ability in abilities.values():
+        if re.match(ability.matcher, action_name):
           is_match_found = True
-          value = text_to_abilities[matcher]
-          
-          if value is None or value in abilities:
-            is_action_found = True
-            action_class_name = value
+
+          if ability.get_is_possible():
+            ability_id = ability.id
           else:
-            print(f'{name} does not have the ability to perform {action_name}.')
+            print(f'{name} is not able to perform {action_name} at this time.')
 
           break
       
       if not is_match_found:
-        print(f'{action_name} does match any known abilities. Options include: {text_to_abilities} Try again.')
+        print(f'{action_name} does match any known abilities. Options include: {list(abilities.keys())} Try again.')
     
-    return action_class_name
+    return ability_id
 
   def get_roll(self, args):
     action_id = args['action_id']

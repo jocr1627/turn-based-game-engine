@@ -1,8 +1,10 @@
 from engine.entity import Entity
 
 class Location(Entity):
-  def __init__(self, name, children=[], neighbors=[]):
-    super().__init__(children=children, state={ 'name': name })
+  parent_alias = 'region'
+
+  def __init__(self, name, neighbors=[]):
+    super().__init__(state={ 'name': name })
 
     for neighbor in neighbors:
       self.add_edge(neighbor)
@@ -17,3 +19,7 @@ class Location(Entity):
   def remove_edge(self, neighbor):
     self.mutate('neighbor_ids', lambda neighbor_ids: neighbor_ids.remove(neighbor.id))
     neighbor.mutate('neighbor_ids', lambda neighbor_ids: neighbor_ids.remove(self.id))
+
+  def validate_parent(self, parent):
+    if not parent.is_type('Region'):
+      raise ValueError(f'Invalid parent for {self.__class__.__name__}. Expected Region but got {parent.__class__.__name__}.')

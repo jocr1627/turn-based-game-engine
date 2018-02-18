@@ -31,6 +31,8 @@ def get_max_mp(willpower, is_health_based):
   return base_mana + willpower
 
 class Character(BaseCharacter):
+  parent_alias = 'location'
+
   def __init__(
     self,
     name,
@@ -230,3 +232,7 @@ class Character(BaseCharacter):
       damage *= args['critical_factor']
 
     return round(damage)
+
+  def validate_parent(self, parent):
+    if not parent.is_type('Location'):
+      raise ValueError(f'Invalid parent for {self.__class__.__name__}. Expected Location but got {parent.__class__.__name__}.')

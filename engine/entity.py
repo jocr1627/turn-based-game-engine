@@ -3,8 +3,9 @@ from engine.deep_merge import deep_merge
 from engine.diff import Diff
 from engine.state import State
 
-class Entity:
+class Entity(object):
   next_entity_id = 0
+  parent_alias = None
 
   def __init__(self, children=[], game=None, getters={}, parent=None, state={}):
     self.game = game
@@ -35,6 +36,32 @@ class Entity:
     if parent is not None:
       parent.add_child(self)
   
+  def __getattr__(self, name):
+    if name == self.parent_alias:
+      name = 'parent'
+    
+    return object.__getattribute__(self, name)
+
+  def __setattr__(self, name, value):
+    if name == self.parent_alias:
+      name = 'parent'
+    
+    object.__setattr__(self, name, value)
+
+  @property
+  def parent(self):
+    return self._parent
+
+  @parent.setter
+  def parent(self, parent):
+    if parent is not None:
+      if not isinstance(parent, Entity):
+        raise ValueError(f'Parent must extend Entity.')
+
+      self.validate_parent(parent)
+
+    self._parent = parent
+
   def add_child(self, child):
     if child.id not in self.children:
       if child.parent is not None:
@@ -128,6 +155,11 @@ class Entity:
   def inspect_in(self, keys, getter):
     return self.state.inspect_in(keys, getter)
 
+  def is_type(self, entity_type):
+    entity_types = [self.__class__.__name__] + [base.__name__ for base in self.__class__.__bases__]
+
+    return entity_type in entity_types
+
   def mutate(self, key, mutater):
     original_value = self.state.get(key)
     self.state.mutate(key, mutater)
@@ -201,3 +233,6 @@ class Entity:
 
       if descendant.id in self.game.listeners:
         del self.game.listeners[descendant.id]
+
+  def validate_parent(self, parent):
+    pass

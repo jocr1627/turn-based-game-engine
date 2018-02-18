@@ -5,8 +5,5 @@ from examples.dnd.entities.melee_attack import MeleeAttack
 class Cleave(ActivatedAbility, MeleeAttack):
   matcher = r'^cleave$'
 
-  def get_default_state(self):
-    return deep_merge(
-      super().get_default_state(),
-      { 'num_targets': 2 }
-    )
+  def get_num_targets(self, args):
+    return 2 if self.get('rank') < 3 else 3

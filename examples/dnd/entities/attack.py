@@ -25,7 +25,7 @@ class FinalizeAttack(AbilityAction):
 
 class PrepareAttack(AbilityAction):
   def execute(self, diff):
-    num_targets = self.ability.get('num_targets')
+    num_targets = request(self, self.ability, 'num_targets')
     character = self.ability.character
     weapon = character.get_weapon()
     max_range = -1 if weapon.get('is_ranged') else 0
@@ -84,13 +84,18 @@ class Attack(TargetedAbility):
     finalize_attack = FinalizeAttack(parent=self)
     finalize_attack.resolve()
   
+  def get_default_getters(self):
+    return deep_merge(
+      super().get_default_getters(),
+      { 'num_targets': self.get_num_targets }
+    )
+  
   def get_default_state(self):
     return deep_merge(
       super().get_default_state(),
       {
         'base_roll': None,
         'modified_roll': None,
-        'num_targets': 1,
         'score': None,
         'target_character_id': None
       }
@@ -102,13 +107,16 @@ class Attack(TargetedAbility):
 
     return normalize_priority(Priorities.STANDARD_ACTION, initiative)
 
+  def get_num_targets(self):
+    return 1
+
   def get_valid_target_ids(self):
     max_range = -1 if self.character.get_weapon().get('is_ranged') else 0
 
     return get_entities_in_range(self.character.location, max_range, self.other_character_filter)
 
   def other_character_filter(self, entity):
-    return entity.is_type('Character') and not entity is self.character
+    return entity.is_type('Character') and not entity is self.character and entity.get('is_alive')
 
   def prepare(self):
     prepare_attack = PrepareAttack(parent=self)

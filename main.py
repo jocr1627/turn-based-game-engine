@@ -99,7 +99,7 @@ def dnd():
     },
     {
       'abilities': [
-        Cleave(),
+        Cleave(state={ 'rank': 3 }),
         PiercingWeaponFocus()
       ],
       'armor': IronArmor(),

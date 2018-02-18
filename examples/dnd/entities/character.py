@@ -113,29 +113,35 @@ class Character(BaseCharacter):
     ]
 
   def get_default_children(self):
-    return [
-      ClearInterrupt(),
-      EnforceRest(),
-      Interrupt(),
-      UpdateCriticalChanceByGuile(),
-      UpdateMaxHpByConstitution(),
-      UpdateMaxMpByWillpower(),
-      SetTargetCharacter()
-    ]
-  
+    return deep_merge(
+      super().get_default_children(),
+      [
+        ClearInterrupt(),
+        EnforceRest(),
+        Interrupt(),
+        UpdateCriticalChanceByGuile(),
+        UpdateMaxHpByConstitution(),
+        UpdateMaxMpByWillpower(),
+        SetTargetCharacter()
+      ]
+    )
+
   def get_default_getters(self):
-    return {
-      'ability_id': self.get_ability_id,
-      'critical_factor': self.get_critical_factor,
-      'is_critical': self.get_is_critical,
-      'is_flanking': self.get_is_flanking,
-      'physical_defense_modifier': self.get_physical_defense_modifier,
-      'roll': self.get_roll,
-      'target_character_ids': self.get_target_character_ids,
-      'target_location_ids': self.get_target_location_ids,
-      'weapon_attack_modifier': self.get_weapon_attack_modifier,
-      'weapon_damage': self.get_weapon_damage
-    }
+    return deep_merge(
+      super().get_default_getters(),
+      {
+        'ability_id': self.get_ability_id,
+        'critical_factor': self.get_critical_factor,
+        'is_critical': self.get_is_critical,
+        'is_flanking': self.get_is_flanking,
+        'physical_defense_modifier': self.get_physical_defense_modifier,
+        'roll': self.get_roll,
+        'target_character_ids': self.get_target_character_ids,
+        'target_location_ids': self.get_target_location_ids,
+        'weapon_attack_modifier': self.get_weapon_attack_modifier,
+        'weapon_damage': self.get_weapon_damage
+      }
+    )
   
   def get_default_state(self):
     return deep_merge(

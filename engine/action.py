@@ -1,9 +1,13 @@
 from engine.base_entity_action import BaseEntityAction, Phases
+from engine.deep_merge import deep_merge
 from engine.self_terminate import SelfTerminate
 
 class Action(BaseEntityAction):
   def get_default_children(self):
-    return [SelfTerminate()]
+    return deep_merge(
+      super().get_default_children(),
+      [SelfTerminate()]
+    )
 
   def get_should_terminate(self, diff):
     return (

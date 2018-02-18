@@ -44,7 +44,7 @@ class Advance(Ability):
     return Priorities.ADVANCE
 
   def get_is_possible(self):
-    return len(get_entities_in_range(self.get_character().parent, 1, self.other_character_filter)) > 0
+    return len(get_entities_in_range(self.parent.parent, 1, self.other_character_filter)) > 0
 
   def other_character_filter(self, entity):
     return isinstance(entity, BaseCharacter) and not entity is self.parent

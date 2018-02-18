@@ -8,9 +8,6 @@ class Ability(Entity):
   def finalize(self):
     return
 
-  def get_character(self):
-    return self.parent
-
   def get_initiative(self):
     return Priorities.NO_ROLL_ACTION
 

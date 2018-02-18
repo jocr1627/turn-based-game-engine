@@ -39,7 +39,7 @@ class PrepareAttack(Action):
 
 class ResolveAttack(Action):
   def execute(self, diff):
-    name = self.parent.parent.get('name')
+    name = self.get_ability().parent.get('name')
     target_character = self.parent.hydrate('target_character_id')
     target_character_name = target_character.get('name')
     defend = Defend(parent=target_character, state={ 'attack_id': self.id })

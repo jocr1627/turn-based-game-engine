@@ -44,7 +44,7 @@ class ResolveFlee(Action):
     return self.parent.parent.get('is_alive')
 
 class Flee(Ability):
-  matcher = r'flee'
+  matcher = r'^flee$'
 
   def get_initiative(self):
     return Priorities.FLEE

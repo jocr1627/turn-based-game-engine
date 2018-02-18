@@ -59,17 +59,26 @@ class Player(Character):
     name = self.get('name')
     target_ids = []
 
-    for i in range(num_targets):
+    for i in range(min(num_targets, len(valid_targets))):
       target_id = None
+      should_break = False
 
       while target_id is None:
         target_name = input(f'Enter a target {target_type} for {name}\'s {action_name}: ').lower()
 
+        if re.match(r'^s(kip)?$', target_name):
+          should_break = True
+          break
+
         if target_name in valid_target_ids_by_name:
           target_id = valid_target_ids_by_name[target_name]
+          del valid_target_ids_by_name[target_name]
         else:
           print(f'{target_name} is not a valid target {target_type}. Options include: {list(valid_target_ids_by_name.keys())} Try again.')
       
+      if should_break:
+        break
+  
       target_ids.append(target_id)
 
     return target_ids

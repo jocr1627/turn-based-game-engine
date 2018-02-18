@@ -1,3 +1,4 @@
+from engine.deep_merge import deep_merge
 from engine.entity import Entity
 
 class Location(Entity):
@@ -14,7 +15,10 @@ class Location(Entity):
     neighbor.mutate('neighbor_ids', lambda neighbor_ids: neighbor_ids.add(self.id))
 
   def get_default_state(self):
-    return { 'neighbor_ids': set() }
+    return deep_merge(
+      super().get_default_state(),
+      { 'neighbor_ids': set() }
+    )
 
   def remove_edge(self, neighbor):
     self.mutate('neighbor_ids', lambda neighbor_ids: neighbor_ids.remove(neighbor.id))

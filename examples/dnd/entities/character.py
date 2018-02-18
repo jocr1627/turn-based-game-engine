@@ -1,5 +1,6 @@
 from itertools import groupby
 import random
+from engine.deep_merge import deep_merge
 from engine.request import request
 from examples.dnd.actions.clear_interrupt import ClearInterrupt
 from examples.dnd.actions.enforce_rest import EnforceRest
@@ -137,34 +138,37 @@ class Character(BaseCharacter):
     }
   
   def get_default_state(self):
-    return {
-      'abilities': {},
-      'active_ability_id': None,
-      'armor_id': None,
-      'attributes': {
-        'charisma': 0,
-        'constitution': 0,
-        'dexterity': 0,
-        'guile': 0,
-        'intellect': 0,
-        'spirit': 0,
-        'strength': 0,
-        'willpower': 0
-      },
-      'critical_chance': 0.05,
-      'default_weapon_id': None,
-      'hp': 1,
-      'inventory': [],
-      'is_alive': True,
-      'level': 1,
-      'max_hp': 1,
-      'max_mp': 0,
-      'mp': 0,
-      'name': self.get_name(),
-      'passive_abilities': {},
-      'target_character_id': None,
-      'weapon_id': None
-    }
+    return deep_merge(
+      super().get_default_state(),
+      {
+        'abilities': {},
+        'active_ability_id': None,
+        'armor_id': None,
+        'attributes': {
+          'charisma': 0,
+          'constitution': 0,
+          'dexterity': 0,
+          'guile': 0,
+          'intellect': 0,
+          'spirit': 0,
+          'strength': 0,
+          'willpower': 0
+        },
+        'critical_chance': 0.05,
+        'default_weapon_id': None,
+        'hp': 1,
+        'inventory': [],
+        'is_alive': True,
+        'level': 1,
+        'max_hp': 1,
+        'max_mp': 0,
+        'mp': 0,
+        'name': self.get_name(),
+        'passive_abilities': {},
+        'target_character_id': None,
+        'weapon_id': None
+      }
+    )
 
   def get_ability_id(self, args):
     ability_ids = [

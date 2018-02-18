@@ -5,6 +5,7 @@ from examples.dnd.actions.blunt_weapon_focus  import BluntWeaponFocus
 from examples.dnd.actions.piercing_weapon_focus  import PiercingWeaponFocus
 from examples.dnd.actions.slashing_weapon_focus  import SlashingWeaponFocus
 from examples.dnd.entities.character import Character
+from examples.dnd.entities.cleave import Cleave
 from examples.dnd.entities.location import Location
 from examples.dnd.entities.player import Player as DndPlayer
 from examples.dnd.entities.region import Region
@@ -97,7 +98,10 @@ def dnd():
       'weapon': ElvenBow()
     },
     {
-      'abilities': [PiercingWeaponFocus()],
+      'abilities': [
+        Cleave(),
+        PiercingWeaponFocus()
+      ],
       'armor': IronArmor(),
       'attributes': {
         'constitution': 2,

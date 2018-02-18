@@ -1,3 +1,4 @@
+from engine.deep_merge import deep_merge
 from examples.dnd.entities.item import Item
 
 class Armor(Item):
@@ -16,7 +17,10 @@ class Armor(Item):
     super().__init__(name=name, owner=owner, state=state)
   
   def get_default_state(self):
-    return {
-      'modifier': 0,
-      'dexterity_cap': None,
-    }
+    return deep_merge(
+      super().get_default_state(),
+      {
+        'modifier': 0,
+        'dexterity_cap': None,
+      }
+    )

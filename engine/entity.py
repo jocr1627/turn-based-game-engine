@@ -15,16 +15,7 @@ class Entity(object):
     self.id = Entity.next_entity_id
     Entity.next_entity_id += 1
     
-    inheritor_stack = [self]
-    raw_state = state
-
-    while len(inheritor_stack) > 0:
-      inheritor = inheritor_stack.pop()
-      raw_state = deep_merge(inheritor.get_default_state(), raw_state)
-      clazz = inheritor.__thisclass__ if isinstance(inheritor, super) else inheritor.__class__
-      supers = [super(base, self) for base in clazz.__bases__]
-      inheritor_stack += [zuper for zuper in supers if hasattr(zuper, 'get_default_state')]
-
+    raw_state = deep_merge(self.get_default_state(), state)
     self.state = State(raw_state)
         
     self.children = {}
@@ -156,9 +147,18 @@ class Entity(object):
     return self.state.inspect_in(keys, getter)
 
   def is_type(self, entity_type):
-    entity_types = [self.__class__.__name__] + [base.__name__ for base in self.__class__.__bases__]
+    stack = [self.__class__]
+    is_type_found = False
 
-    return entity_type in entity_types
+    while not is_type_found and len(stack) > 0:
+      clazz = stack.pop()
+
+      if clazz.__name__ == entity_type:
+        is_type_found = True
+      elif clazz is not Entity:
+        stack += clazz.__bases__
+
+    return is_type_found
 
   def mutate(self, key, mutater):
     original_value = self.state.get(key)

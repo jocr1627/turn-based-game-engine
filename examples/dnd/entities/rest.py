@@ -14,7 +14,7 @@ class ResolveRest(Action):
     return self.parent.parent.get('is_alive')
 
 class Rest(Ability):
-  matcher = r'rest'
+  matcher = r'^rest$'
 
   def get_initiative(self):
     return Priorities.NO_ROLL_ACTION

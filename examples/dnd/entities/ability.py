@@ -5,9 +5,6 @@ from examples.dnd.priorities import Priorities
 class Ability(Entity):
   parent_alias = 'character'
 
-  def __init__(self):
-    super().__init__()
-  
   def finalize(self):
     return
 

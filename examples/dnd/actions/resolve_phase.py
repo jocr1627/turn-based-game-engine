@@ -17,7 +17,7 @@ def sort_tied_actions(actions):
   while sorted_actions is None:
     string_input = input('Enter action resolution order by id ("skip" for random): ')
     
-    if re.match(r's(kip)?', string_input):
+    if re.match(r'^s(kip)?$', string_input):
       random.shuffle(actions)
       sorted_actions = actions
       break

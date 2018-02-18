@@ -24,7 +24,7 @@ class ResolveMove(Action):
     return self.parent.parent.get('is_alive')
 
 class Move(Ability):
-  matcher = r'move'
+  matcher = r'^move$'
 
   def get_initiative(self):
     return Priorities.NO_ROLL_ACTION

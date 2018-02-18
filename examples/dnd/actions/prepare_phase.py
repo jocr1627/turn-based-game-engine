@@ -6,9 +6,10 @@ class PreparePhase(Action):
     characters = self.game.hydrate('character_ids')
 
     for character in characters:
-      ability_id = request(self, character, 'ability_id')
-      character.set('active_ability_id', ability_id)
+      if character.get('is_alive'):
+        ability_id = request(self, character, 'ability_id')
+        character.set('active_ability_id', ability_id)
 
-      if ability_id is not None:
-        ability = self.hydrate_by_id(ability_id)
-        ability.prepare()
+        if ability_id is not None:
+          ability = self.hydrate_by_id(ability_id)
+          ability.prepare()

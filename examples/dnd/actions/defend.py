@@ -1,4 +1,5 @@
 from engine.action import Action
+from engine.deep_merge import deep_merge
 from engine.request import request
 from examples.dnd.actions.deal_damage import DealDamage
 
@@ -11,4 +12,12 @@ class Defend(Action):
     self.set('score', modified_roll + physical_defense_modifier)
 
   def get_default_state(self):
-    return { 'attack_id': None, 'base_roll': None, 'modified_roll': None, 'score': None }
+    return deep_merge(
+      super().get_default_state(),
+      {
+        'attack_id': None,
+        'base_roll': None,
+        'modified_roll': None,
+        'score': None
+      }
+    )

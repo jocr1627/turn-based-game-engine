@@ -65,7 +65,7 @@ class ResolveEquip(Action):
     return self.parent.parent.get('is_alive')
 
 class Equip(Ability):
-  matcher = r'equip'
+  matcher = r'^equip$'
 
   def get_initiative(self):
     return Priorities.NO_ROLL_ACTION

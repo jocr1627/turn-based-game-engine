@@ -39,7 +39,7 @@ class ResolveAdvance(AbilityAction):
     return self.ability.character.get('is_alive')
 
 class Advance(Ability):
-  matcher = r'advance'
+  matcher = r'^advance$'
 
   def get_initiative(self):
     return Priorities.ADVANCE

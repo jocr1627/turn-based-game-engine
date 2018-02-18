@@ -6,6 +6,7 @@ class Game(Entity):
     self.action_stack = ActionStack()
     self.descendants = {}
     self.diffs = []
+    self.garbage = set()
     self.listeners = {}
 
     super().__init__(children=children, game=self, getters=getters, state=state)

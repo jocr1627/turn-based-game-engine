@@ -66,3 +66,9 @@ class BaseEntityAction(BaseAction, Entity):
 
     self.phase = Phases.IDLE
     game.action_stack.pop()
+
+    for entity_id in game.garbage:
+      entity = game.hydrate_by_id(entity_id)
+      entity.parent.remove_child(entity)
+    
+    game.garbage = set()

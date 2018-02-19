@@ -1,4 +1,3 @@
-from engine.base_listener import BaseListener
 from engine.deep_merge import deep_merge
 from engine.diff import Diff
 from engine.state import State
@@ -97,6 +96,20 @@ class Entity(object):
   def get_name(clazz):
     return clazz.__name__
 
+  @classmethod
+  def get_types(clazz):
+    entity_types = set([clazz.__name__])
+    stack = [clazz]
+
+    while len(stack) > 0:
+      clazz = stack.pop()
+
+      if clazz is not Entity:
+        entity_types = entity_types.union([base.__name__ for base in clazz.__bases__])
+        stack += clazz.__bases__
+
+    return entity_types
+
   def has(self, key):
     return self.state.has(key)
   
@@ -146,19 +159,9 @@ class Entity(object):
   def inspect_in(self, keys, getter):
     return self.state.inspect_in(keys, getter)
 
-  def is_type(self, entity_type):
-    stack = [self.__class__]
-    is_type_found = False
-
-    while not is_type_found and len(stack) > 0:
-      clazz = stack.pop()
-
-      if clazz.__name__ == entity_type:
-        is_type_found = True
-      elif clazz is not Entity:
-        stack += clazz.__bases__
-
-    return is_type_found
+  @classmethod
+  def is_type(clazz, entity_type):
+    return entity_type in clazz.get_types()
 
   def mutate(self, key, mutater):
     original_value = self.state.get(key)
@@ -178,8 +181,15 @@ class Entity(object):
     if self.game is not None:
       self.game.descendants[descendant.id] = descendant
 
-      if isinstance(descendant, BaseListener):
-        self.game.listeners[descendant.id] = descendant
+      if descendant.is_type('Listener'):
+        self.register_listener(descendant)
+
+  def register_listener(self, listener):
+    for trigger_type in listener.trigger_types:
+      if trigger_type not in self.game.listeners:
+        self.game.listeners[trigger_type] = {}
+      
+      self.game.listeners[trigger_type][listener.id] = listener
 
   def remove_child(self, child):
     if child.id in self.children:
@@ -232,7 +242,14 @@ class Entity(object):
       del self.game.descendants[descendant.id]
 
       if descendant.id in self.game.listeners:
-        del self.game.listeners[descendant.id]
+        self.unregister_listener(descendant)
+
+  def unregister_listener(self, listener):
+    for trigger_type in listener.trigger_types:
+      del self.game.listeners[trigger_type][listener.id]
+    
+    if len(self.game[listeners][trigger_type]) == 0:
+      del self.game.listeners[trigger_type]
 
   def validate_parent(self, parent):
     pass

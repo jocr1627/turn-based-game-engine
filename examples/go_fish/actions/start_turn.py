@@ -1,7 +1,7 @@
 from engine.action import Phases
-from engine.base_entity_listener import BaseEntityListener
+from engine.listener import Listener
 
-class StartTurn(BaseEntityListener):
+class StartTurn(Listener):
   def execute(self, diff):
     self.game.set('active_player_id', self.parent.id)
 

@@ -1,7 +1,7 @@
 from engine.action import Phases
-from engine.base_entity_listener import BaseEntityListener
+from engine.listener import Listener
 
-class EndTurn(BaseEntityListener):
+class EndTurn(Listener):
   def execute(self, diff):
     self.game.set('active_player_id', None)
 

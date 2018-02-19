@@ -1,8 +1,8 @@
 from engine.action import Phases
-from engine.base_entity_listener import BaseEntityListener
+from engine.listener import Listener
 from examples.go_fish.actions.request import Request
 
-class UserInputRequest(BaseEntityListener):
+class UserInputRequest(Listener):
   def execute(self, diff):
     print(self.parent.get('hand'))
     rank = None

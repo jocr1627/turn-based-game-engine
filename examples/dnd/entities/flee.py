@@ -1,7 +1,6 @@
 from engine.action import Action
 from engine.request import request
 from examples.dnd.entities.ability import Ability
-from examples.dnd.entities.base_character import BaseCharacter
 from examples.dnd.utils.get_entities_in_range import get_entities_in_range
 from examples.dnd.priorities import Priorities
 
@@ -53,7 +52,7 @@ class Flee(Ability):
     return len(get_entities_in_range(self.parent.parent, 1, self.other_character_filter)) > 0
 
   def other_character_filter(self, entity):
-    return isinstance(entity, BaseCharacter) and not entity is self.parent
+    return entity.is_type('Character') and not entity is self.parent
 
   def prepare(self):
     prepare_flee = PrepareFlee(parent=self)

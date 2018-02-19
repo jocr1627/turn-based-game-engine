@@ -1,6 +1,5 @@
 from engine.request import request
 from examples.dnd.entities.ability import Ability, AbilityAction
-from examples.dnd.entities.base_character import BaseCharacter
 from examples.dnd.utils.get_entities_in_range import get_entities_in_range
 from examples.dnd.priorities import Priorities
 

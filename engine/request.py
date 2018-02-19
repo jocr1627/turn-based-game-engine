@@ -6,7 +6,7 @@ class Request(Action):
     key = self.get('key')
     value = self.parent.getters[key](args)
     self.set(key, value)
-  
+
   def get_should_terminate(self, diff):
     trigger = self.get_trigger()
 

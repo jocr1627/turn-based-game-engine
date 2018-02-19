@@ -1,8 +1,15 @@
-from engine.base_entity_listener import BaseEntityListener
+from engine.deep_merge import deep_merge
+from engine.listener import Listener
 
-class Interrupt(BaseEntityListener):
+class Interrupt(Listener):
   def execute(self, diff):
     self.parent.set('has_taken_damage', True)
+
+  def get_default_trigger_types(self):
+    return deep_merge(
+      super().get_default_trigger_types(),
+      [None]
+    )
 
   def get_should_react(self, diff):
     hp_diff = diff.get_in(['state', self.parent.id, 'hp'])

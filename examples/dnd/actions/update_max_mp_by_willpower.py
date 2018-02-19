@@ -1,6 +1,6 @@
-from engine.base_entity_listener import BaseEntityListener
+from engine.listener import Listener
 
-class UpdateMaxMpByWillpower(BaseEntityListener):
+class UpdateMaxMpByWillpower(Listener):
   def execute(self, diff):
     willpower,new_willpower = diff.get_in(['state', self.parent.id, 'attributes', 'willpower'])
     difference = new_willpower - willpower

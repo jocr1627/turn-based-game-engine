@@ -1,15 +1,16 @@
 from engine.action import Phases
-from engine.base_entity_listener import BaseEntityListener
+from engine.deep_merge import deep_merge
+from engine.listener import Listener
 
-class DecrementCooldown(BaseEntityListener):
+class DecrementCooldown(Listener):
   def execute(self, diff):
     self.parent.update('remaining_cooldown', lambda remaining_cooldown: max(remaining_cooldown - 1, 0))
   
-  def get_should_react(self, diff):
-    trigger = self.get_trigger()
-
-    return (
-      self.parent.get('remaining_cooldown') > 0
-      and trigger.is_type('StartRound')
-      and trigger.phase is Phases.EXECUTION
+  def get_default_trigger_types(self):
+    return deep_merge(
+      super().get_default_trigger_types(),
+      [('StartRound', Phases.EXECUTION)]
     )
+
+  def get_should_react(self, diff):
+    return self.parent.get('remaining_cooldown') > 0

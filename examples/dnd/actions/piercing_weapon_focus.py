@@ -1,10 +1,10 @@
 from engine.action import Phases
-from engine.base_entity_listener import BaseEntityListener
 from engine.deep_merge import deep_merge
+from engine.listener import Listener
 from examples.dnd.attack_types import AttackTypes
 from examples.dnd.actions.piercing_critical_effect import PiercingCriticalEffect
 
-class PiercingWeaponFocus(BaseEntityListener):
+class PiercingWeaponFocus(Listener):
   def execute(self, diff):
     trigger = self.get_trigger()
     rank = self.get('rank')

@@ -1,6 +1,7 @@
 from itertools import groupby
 import random
 from engine.deep_merge import deep_merge
+from engine.entity import Entity
 from engine.request import request
 from examples.dnd.actions.clear_interrupt import ClearInterrupt
 from examples.dnd.actions.enforce_rest import EnforceRest
@@ -12,7 +13,6 @@ from examples.dnd.actions.update_max_mp_by_willpower import UpdateMaxMpByWillpow
 from examples.dnd.entities.ability import Ability
 from examples.dnd.entities.advance import Advance
 from examples.dnd.entities.attack import Attack
-from examples.dnd.entities.base_character import BaseCharacter
 from examples.dnd.entities.equip import Equip
 from examples.dnd.entities.flee import Flee
 from examples.dnd.entities.idle import Idle
@@ -31,7 +31,7 @@ def get_max_mp(willpower, is_health_based):
 
   return base_mana + willpower
 
-class Character(BaseCharacter):
+class Character(Entity):
   parent_alias = 'location'
 
   def __init__(

@@ -1,9 +1,9 @@
 import random
 from engine.action import Phases
-from engine.base_entity_listener import BaseEntityListener
+from engine.listener import Listener
 from examples.go_fish.actions.request import Request
 
-class MaxValueRequest(BaseEntityListener):
+class MaxValueRequest(Listener):
   def execute(self, diff):
     hand = self.parent.get('hand')
     hand_by_rank = {}

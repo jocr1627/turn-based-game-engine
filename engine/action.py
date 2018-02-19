@@ -1,16 +1,14 @@
-from engine.base_entity_action import BaseEntityAction, Phases
+from engine.base_action import BaseAction, Phases
 from engine.deep_merge import deep_merge
-from engine.self_terminate import SelfTerminate
+from engine.destroy_entity import DestroyEntity
 
-class Action(BaseEntityAction):
+class DestroyAction(DestroyEntity):
+  def get_should_react(self, diff):
+    return self.get_trigger() is self.parent
+
+class Action(BaseAction):
   def get_default_children(self):
     return deep_merge(
       super().get_default_children(),
-      [SelfTerminate()]
-    )
-
-  def get_should_terminate(self, diff):
-    return (
-      self is self.game.action_stack.stack[-1]
-      and self.phase is Phases.EXECUTION
+      [DestroyAction(trigger_types=[(self.get_name(), Phases.EXECUTION)])]
     )

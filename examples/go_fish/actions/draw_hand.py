@@ -1,8 +1,8 @@
 from engine.action import Phases
-from engine.base_entity_listener import BaseEntityListener
+from engine.listener import Listener
 from examples.go_fish.actions.draw  import Draw
 
-class DrawHand(BaseEntityListener):
+class DrawHand(Listener):
   def execute(self, diff):
     for i in range(5):
       draw = Draw(parent=self.parent)

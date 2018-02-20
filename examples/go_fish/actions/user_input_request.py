@@ -1,4 +1,4 @@
-from engine.action import Phases
+from engine.deep_merge import deep_merge
 from engine.listener import Listener
 from examples.go_fish.actions.request import Request
 
@@ -36,17 +36,17 @@ class UserInputRequest(Listener):
     action = Request(parent=self.parent, state=request_state)
     action.resolve()
 
+  def get_default_trigger_types(self):
+    return deep_merge(
+      super().get_default_trigger_types(),
+      ['StartTurn']
+    )
+
   def get_is_valid(self, diff):
     return (
       self.parent.id is self.game.get('active_player_id')
       and self.game.get('is_in_progress')
     )
 
-  def get_should_react(self, diff):
-    trigger = self.get_trigger()
-    
-    return (
-      trigger.phase is Phases.EXECUTION
-      and trigger.get_name() is 'StartTurn'
-      and self.parent.id is self.game.get('active_player_id')
-    )
+  def get_should_react(self, diff):    
+    return self.parent.id is self.game.get('active_player_id')

@@ -1,4 +1,3 @@
-from engine.action import Phases
 from engine.listener import Listener
 from examples.go_fish.actions.draw  import Draw
 
@@ -18,8 +17,7 @@ class DrawHand(Listener):
     trigger = self.get_trigger()
     
     return (
-      (trigger.phase is Phases.EXECUTION and trigger.get_name() is 'StartGame')
-      or diff.inspect_in(
+      diff.inspect_in(
         ['state', self.parent.id, 'hand'],
         lambda hand_diff: hand_diff is not None and len(hand_diff[1]) == 0
       )

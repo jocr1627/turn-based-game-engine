@@ -1,14 +1,15 @@
-from engine.base_action import BaseAction, Phases
-from engine.deep_merge import deep_merge
+from engine.base_action import BaseAction
 from engine.destroy_entity import DestroyEntity
-
-class DestroyAction(DestroyEntity):
-  def get_should_react(self, diff):
-    return self.get_trigger() is self.parent
+from engine.diff import Diff
 
 class Action(BaseAction):
-  def get_default_children(self):
-    return deep_merge(
-      super().get_default_children(),
-      [DestroyAction(trigger_types=[(self.get_name(), Phases.EXECUTION)])]
-    )
+  is_self_destructive = True
+
+  def resolve(self, diff=Diff()):
+    super().resolve(diff)
+
+    if self.is_self_destructive:
+      game = self.game
+      destroy_entity = DestroyEntity(parent=game, state={ 'entity_id': self.id })
+      destroy_entity.resolve()
+      game.remove_child(destroy_entity)

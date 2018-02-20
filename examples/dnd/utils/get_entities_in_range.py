@@ -1,5 +1,5 @@
 def get_entities_in_range(reference_location, max_range=0, filter_fn=lambda entity: True):
-  region = reference_location.parent
+  region = reference_location.region
   stack = [(reference_location, 0)]
   valid_locations = set()
 

@@ -1,16 +1,7 @@
 from engine.diff import Diff
 from engine.entity import Entity
 
-class Phases:
-  IDLE = 'IDLE'
-  PREPARATION = 'PREPARATION'
-  EXECUTION = 'EXECUTION'
-
 class BaseAction(Entity):
-  def __init__(self, **args):
-    super().__init__(**args)
-    self.phase = Phases.IDLE
-
   def execute(self, diff):
     return {}
 
@@ -30,13 +21,13 @@ class BaseAction(Entity):
     
     return triggers
 
-  def handle_listeners(self, diff):
+  def handle_listeners(self, diff, game):
     listener_set = set()
-    trigger_types = [None] + [(entity_type, self.phase) for entity_type in self.get_types()]
+    trigger_types = self.get_types().union([None])
 
     for trigger_type in trigger_types:
-      if trigger_type in self.game.listeners:
-        for listener in self.game.listeners[trigger_type].values():
+      if trigger_type in game.listeners:
+        for listener in game.listeners[trigger_type].values():
           if listener.get_should_react(diff):
             listener_set.add(listener)
 
@@ -46,25 +37,13 @@ class BaseAction(Entity):
       listener.resolve(diff)
 
   def resolve(self, diff=Diff()):
-    if not self.get_is_valid(diff):
-      return
-    
-    self.phase = Phases.PREPARATION
-    self.game.action_stack.push(self)
-
-    self.handle_listeners(diff)
-
-    if not self.get_is_valid(diff):
+    if self.game is None or not self.get_is_valid(diff):
       return
 
-    self.phase = Phases.EXECUTION
-
-    self.game.start_diff()
+    game = self.game
+    game.action_stack.push(self)
+    game.start_diff()
     self.execute(diff)
-    next_diff = self.game.end_diff()
-
-    self.handle_listeners(next_diff)
-
-    self.phase = Phases.IDLE
-    self.game.action_stack.pop()
-    self.game.collect_garbage()
+    next_diff = game.end_diff()
+    self.handle_listeners(next_diff, game)
+    game.action_stack.pop()

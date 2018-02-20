@@ -1,4 +1,3 @@
-from engine.action import Phases
 from engine.deep_merge import deep_merge
 from engine.listener import Listener
 
@@ -9,5 +8,5 @@ class ClearInterrupt(Listener):
   def get_default_trigger_types(self):
     return deep_merge(
       super().get_default_trigger_types(),
-      [('EndRound', Phases.EXECUTION)]
+      ['EndRound']
     )

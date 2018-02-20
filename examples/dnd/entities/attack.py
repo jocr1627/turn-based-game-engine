@@ -107,7 +107,7 @@ class Attack(TargetedAbility):
 
     return normalize_priority(Priorities.STANDARD_ACTION, initiative)
 
-  def get_num_targets(self):
+  def get_num_targets(self, args):
     return 1
 
   def get_valid_target_ids(self):

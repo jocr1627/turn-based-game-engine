@@ -1,5 +1,6 @@
-from engine.listener import Listener
+from engine.base_action import BaseAction
 
-class DestroyEntity(Listener):
+class DestroyEntity(BaseAction):
   def execute(self, diff):
-    self.game.garbage.add(self.parent.id)
+    entity = self.hydrate('entity_id')
+    entity.parent.remove_child(entity)

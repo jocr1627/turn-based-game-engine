@@ -1,6 +1,6 @@
 import random
 import re
-from engine.action import Action, Phases
+from engine.action import Action
 from examples.dnd.entities.player import Player
 
 def sort_tied_actions(actions):

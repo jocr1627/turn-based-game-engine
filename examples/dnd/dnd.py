@@ -14,6 +14,15 @@ class DnD(Game):
 
     super().__init__(children=regions, state=state)
 
+  def end(self):
+    self.set('is_in_progress', False)
+
+  def get_characters(self):
+    return self.hydrate('character_ids')
+
+  def get_round_number(self):
+    return self.get('round_number')
+
   def run(self):
     self.set('is_in_progress', True)
     self.set('round_number', 0)

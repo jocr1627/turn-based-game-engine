@@ -14,6 +14,5 @@ class ManaExpendingAbility(RankedAbility):
 
   def resolve(self):
     mana_cost = self.get('mana_cost')
-    spend_mana = SpendMana(parent=self.character, state={ 'mana': mana_cost })
-    spend_mana.resolve()
+    self.character.spend_mana(mana_cost)
     super().resolve()

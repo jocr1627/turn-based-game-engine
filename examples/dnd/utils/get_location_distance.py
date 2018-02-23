@@ -10,7 +10,7 @@ def get_location_distance(location1, location2):
     if location is location2:
       distance = current_distance
     else:
-      neighbors = location.hydrate('neighbor_ids')
+      neighbors = location.get_neighbors()
       search_stack += [(neighbor, current_distance + 1) for neighbor in neighbors if neighbor.id not in searched]
 
   return distance

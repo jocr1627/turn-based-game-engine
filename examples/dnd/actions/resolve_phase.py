@@ -57,8 +57,8 @@ class ResolvePhase(Action):
   def execute(self, diff):
     actions_by_initiative = {}
 
-    for character in self.game.hydrate('character_ids'):
-      ability = character.hydrate('active_ability_id')
+    for character in self.game.get_characters():
+      ability = character.get_active_ability()
 
       if ability is not None:
         initiative = ability.get_initiative()

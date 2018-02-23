@@ -1,6 +1,7 @@
 from engine.deep_merge import deep_merge
 from engine.request import request
 from examples.dnd.actions.decrement_cooldown import DecrementCooldown
+from examples.dnd.actions.start_cooldown import StartCooldown
 from examples.dnd.entities.ability import Ability
 
 class CooldownAbility(Ability):
@@ -29,6 +30,6 @@ class CooldownAbility(Ability):
     return self.get('remaining_cooldown') == 0 and super().get_is_possible()
 
   def resolve(self):
-    cooldown = request(self, self, 'cooldown')
-    self.set('remaining_cooldown', cooldown)
+    start_cooldown = StartCooldown(parent=self)
+    start_cooldown.resolve()
     super().resolve()

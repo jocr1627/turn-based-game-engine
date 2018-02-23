@@ -23,13 +23,13 @@ class ResolveAdvance(AbilityAction):
     target_character = self.hydrate_in(['resolve_args', 'target_character_id'])
     target_character_name = target_character.get('name')
     target_location = target_character.location
-    neighbors = current_location.hydrate('neighbor_ids')
+    neighbors = current_location.get_neighbors()
     possible_locations = [current_location] + neighbors
     advance_location = target_location if target_location in possible_locations else original_target_location
     advance_location_name = advance_location.get('name')
 
     if advance_location is not current_location:
-      advance_location.add_child(character)
+      character.move(advance_location.id)
       print(f'{name} advanced on {target_character_name} to {advance_location_name}.')
     else:
       print(f'{name} stayed put.')

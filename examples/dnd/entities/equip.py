@@ -1,15 +1,16 @@
-from engine.action import Action
-from examples.dnd.entities.ability import Ability
+from examples.dnd.entities.weapons.weapon import Weapon 
+from examples.dnd.entities.ability import Ability, AbilityAction
 from examples.dnd.priorities import Priorities
 
-class PrepareEquip(Action):
+class PrepareEquip(AbilityAction):
   def execute(self, diff):
-    name = self.parent.parent.get('name')
-    inventory = self.parent.parent.hydrate('inventory')
+    character = self.ability.character
+    name = character.get('name')
+    inventory = character.hydrate('inventory')
     inventory_weapons = [item for item in inventory if isinstance(item, Weapon)]
     location_weapons = []
 
-    for child in self.parent.parent.parent.children.values():
+    for child in character.location.children.values():
       if isinstance(child, Weapon):
         location_weapons.append(child)
 
@@ -50,19 +51,20 @@ class PrepareEquip(Action):
           print(f'{weapon_id} is not a valid id. Try again.')
 
     resolve_args = { 'weapon_id', weapon.id }
-    self.parent.set('resolve_args', resolve_args)
+    self.AbilityAction.set('resolve_args', resolve_args)
 
-class ResolveEquip(Action):
+class ResolveEquip(AbilityAction):
   def execute(self, diff):
-    name = self.parent.parent.get('name')
+    character = self.ability.character
+    name = character.get('name')
     weapon = self.hydrate('weapon_id')
     weapon_id = weapon.id if weapon is not None else None
     weapon_name = weapon.get('name') if weapon is not None else 'nothing'
-    self.parent.parent.set('weapon_id', weapon_id)
+    character.set('weapon_id', weapon_id)
     print(f'{name} equipped {weapon_name}.')
 
   def get_is_valid(self, diff):
-    return self.parent.parent.get('is_alive')
+    return self.ability.character.get('is_alive')
 
 class Equip(Ability):
   matcher = r'^equip$'

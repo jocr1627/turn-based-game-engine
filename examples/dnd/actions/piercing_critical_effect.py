@@ -22,4 +22,5 @@ class PiercingCriticalEffect(Listener):
     return (
       trigger.get('key') is 'critical_factor'
       and trigger.parent is self.parent
+      and trigger.id is self.get('attack_id')
     )

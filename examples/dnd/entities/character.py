@@ -3,10 +3,15 @@ import random
 from engine.deep_merge import deep_merge
 from engine.entity import Entity
 from engine.request import request
-from examples.dnd.actions.clear_interrupt import ClearInterrupt
+from examples.dnd.actions.deal_damage import DealDamage
+from examples.dnd.actions.defend import Defend
+from examples.dnd.actions.die import Die
 from examples.dnd.actions.enforce_rest import EnforceRest
-from examples.dnd.actions.interrupt import Interrupt
+from examples.dnd.actions.prepare_turn import PrepareTurn
 from examples.dnd.actions.set_target_character import SetTargetCharacter
+from examples.dnd.actions.spend_mana import SpendMana
+from examples.dnd.actions.stagger import Stagger
+from examples.dnd.actions.stun import Stun
 from examples.dnd.actions.update_critical_chance_by_guile import UpdateCriticalChanceByGuile
 from examples.dnd.actions.update_max_hp_by_constitution import UpdateMaxHpByConstitution
 from examples.dnd.actions.update_max_mp_by_willpower import UpdateMaxMpByWillpower
@@ -101,6 +106,26 @@ class Character(Entity):
 
     super().__init__(children=children, parent=location, state=state)
 
+  def clear_round_state(self):
+    self.set('has_taken_damage', False)
+
+  def damage(self, damage):
+    deal_damage = DealDamage(parent=self, state={ 'damage': damage })
+    deal_damage.resolve()
+
+  def defend(self, attack):
+    defend = Defend(parent=self, state={ 'attack_id': attack.id })
+    defend.resolve()
+
+    return defend
+  
+  def die(self):
+    die = Die(parent=self)
+    die.resolve()
+  
+  def get_active_ability(self):
+    return self.hydrate('active_ability_id')
+
   def get_default_abilities(self):
     return [
       Advance(),
@@ -116,9 +141,7 @@ class Character(Entity):
     return deep_merge(
       super().get_default_children(),
       [
-        ClearInterrupt(),
         EnforceRest(),
-        Interrupt(),
         UpdateCriticalChanceByGuile(),
         UpdateMaxHpByConstitution(),
         UpdateMaxMpByWillpower(),
@@ -165,6 +188,9 @@ class Character(Entity):
         'hp': 1,
         'inventory': [],
         'is_alive': True,
+        'is_prone': False,
+        'is_staggered': False,
+        'is_stunned': False,
         'level': 1,
         'max_hp': 1,
         'max_mp': 0,
@@ -198,7 +224,7 @@ class Character(Entity):
     target_character = self.hydrate_by_id(target_character_id)
     target_id_of_target = target_character.get('target_character_id')
 
-    return target_id_of_target is not self.id
+    return target_character.get('is_staggered') or target_id_of_target is not self.id
 
   def get_physical_defense_modifier(self, args):
     armor = self.hydrate('armor_id')
@@ -234,14 +260,49 @@ class Character(Entity):
     return weapon_attack_modifier
 
   def get_weapon_damage(self, args):
+    action = self.hydrate_by_id(args['action_id'])
     weapon = self.get_weapon()
+    dice = weapon.get('dice')
+    damage_roll_args = { 'action_id': action.id, 'dice': dice, 'roll_type': 'damage' }
+    base_damage_roll,modified_damage_roll = request(action, self, 'roll', args=damage_roll_args)
+    attack_type = weapon.get('attack_type')
+    is_critical_args = { 'attack_type': attack_type, 'base_roll': args['base_roll'] }
+    is_critical = request(action, self, 'is_critical', args=is_critical_args)
+    critical_factor = request(action, self, 'critical_factor')
     damage_modifier = weapon.get('damage_modifier')
-    damage = (args['roll'] + damage_modifier)
+    damage = (modified_damage_roll + damage_modifier)
     
-    if args['is_critical']:
-      damage *= args['critical_factor']
+    if is_critical:
+      damage *= critical_factor
 
     return round(damage)
+
+  def knockdown(self):
+    knockdown = Knockdown(parent=self)
+    knockdown.resolve()
+  
+  def move(self, location_id):
+    self.hydrate_by_id(location_id).add_child(self)
+
+  def prepare_turn(self):
+    prepare_turn = PrepareTurn(parent=self)
+    prepare_turn.resolve()
+  
+  def rest(self):
+    rest = Rest(parent=self)
+    rest.resolve()
+
+  def spend_mana(self, mana):
+    spend_mana = SpendMana(parent=self, state={ 'mana': mana })
+    spend_mana.resolve()
+
+  def stagger(self):
+    stagger = Stagger(parent=self)
+    stagger.resolve()
+
+  def stun(self):
+    stun = Stun(parent=self)
+    stun.resolve()
 
   def validate_parent(self, parent):
     if not parent.is_type('Location'):

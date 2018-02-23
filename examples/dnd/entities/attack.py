@@ -1,7 +1,6 @@
 from engine.deep_merge import deep_merge
 from engine.normalize_priority import normalize_priority
 from engine.request import request
-from examples.dnd.actions.deal_damage import DealDamage
 from examples.dnd.actions.defend import Defend
 from examples.dnd.entities.ability import AbilityAction
 from examples.dnd.entities.targeted_ability import TargetedAbility
@@ -11,11 +10,11 @@ from examples.dnd.priorities import Priorities
 class FinalizeAttack(AbilityAction):
   def execute(self, diff):
     modified_roll = self.ability.get('modified_roll')
-    target_character_id = self.ability.get('target_character_id')
-    weapon_id = self.ability.get('weapon_id')
+    target_character = self.ability.get_targets()[0]
     character = self.ability.character
-    weapon_attack_modifier = request(self, character, 'weapon_attack_modifier', args={ 'weapon_id': weapon_id })
-    is_flanking = request(self, character, 'is_flanking', args={ 'target_character_id': target_character_id })
+    weapon = character.get_weapon()
+    weapon_attack_modifier = request(self, character, 'weapon_attack_modifier')
+    is_flanking = request(self, character, 'is_flanking', args={ 'target_character_id': target_character.id })
     score = modified_roll + weapon_attack_modifier
 
     if is_flanking:
@@ -37,34 +36,22 @@ class PrepareAttack(AbilityAction):
     self.ability.set('base_roll', base_roll)
     self.ability.set('modified_roll', modified_roll)
     self.ability.set('target_character_id', target_character_id)
-    self.ability.set('weapon_id', weapon.id)
 
 class ResolveAttack(AbilityAction):
   def execute(self, diff):
     character = self.ability.character
     name = character.get('name')
-    target_character = self.ability.hydrate('target_character_id')
+    target_character = self.ability.get_targets()[0]
     target_character_name = target_character.get('name')
-    defend = Defend(parent=target_character, state={ 'attack_id': self.id })
-    defend.resolve()
+    defend = target_character.defend(self)
     base_roll = self.ability.get('base_roll')
     attack_score = self.ability.get('score')
     base_defense_roll = defend.get('base_roll')
     defense_score = defend.get('score')
 
     if base_defense_roll != 20 and base_roll != 1 and (base_roll == 20 or attack_score > defense_score):
-      weapon = self.ability.hydrate('weapon_id')
-      dice = weapon.get('dice')
-      damage_roll_args = { 'action_id': self.ability.id, 'dice': dice, 'roll_type': 'damage' }
-      base_damage_roll,modified_damage_roll = request(self, character, 'roll', args=damage_roll_args)
-      attack_type = weapon.get('attack_type')
-      is_critical_args = args={ 'attack_type': attack_type, 'base_roll': base_roll, 'target_character_ids': [target_character.id] }
-      is_critical = request(self, character, 'is_critical', args=is_critical_args)
-      critical_factor = request(self, character, 'critical_factor')
-      weapon_damage_args = { 'action_id': self.ability.id, 'critical_factor': critical_factor, 'is_critical': is_critical, 'roll': modified_damage_roll, 'weapon_id': weapon.id }
-      damage = request(self, character, 'weapon_damage', args=weapon_damage_args)
-      deal_damage = DealDamage(parent=target_character, state={ 'damage': damage })
-      deal_damage.resolve()
+      damage = request(self, character, 'weapon_damage', args={ 'action_id': self.ability.id, 'base_roll': base_roll })
+      target_character.damage(damage)
     else:
       print(f'{target_character_name} successfully defended against {name}\'s Attack.')
 
@@ -72,9 +59,9 @@ class ResolveAttack(AbilityAction):
     character = self.ability.character
 
     return (
-      (not self.ability.hydrate('weapon_id').get('is_ranged') or not character.get('has_taken_damage'))
+      (not character.get_weapon().get('is_ranged') or not character.get('has_taken_damage'))
       and character.get('is_alive')
-      and self.ability.hydrate('target_character_id').get('is_alive')
+      and self.ability.get_targets()[0].get('is_alive')
     )
 
 class Attack(TargetedAbility):
@@ -109,6 +96,9 @@ class Attack(TargetedAbility):
 
   def get_num_targets(self, args):
     return 1
+  
+  def get_targets(self):
+    return [self.hydrate('target_character_id')]
 
   def get_valid_target_ids(self):
     max_range = -1 if self.character.get_weapon().get('is_ranged') else 0

@@ -20,6 +20,9 @@ class Location(Entity):
       { 'neighbor_ids': set() }
     )
 
+  def get_neighbors(self):
+    return self.hydrate('neighbor_ids')
+
   def remove_edge(self, neighbor):
     self.mutate('neighbor_ids', lambda neighbor_ids: neighbor_ids.remove(neighbor.id))
     neighbor.mutate('neighbor_ids', lambda neighbor_ids: neighbor_ids.remove(self.id))

@@ -1,4 +1,5 @@
 from engine.action import Action
+from examples.dnd.actions.die import Die
 
 class DealDamage(Action):
   def execute(self, diff):
@@ -7,8 +8,8 @@ class DealDamage(Action):
     hp = self.parent.get('hp')
     hp = hp - damage if hp >= damage else 0
     self.parent.set('hp', hp)
+    self.parent.set('has_taken_damage', True)
     print(f'{name} took {damage} points of damage ({hp} points remain).')
 
     if hp == 0:
-      self.parent.set('is_alive', False)
-      print(f'{name} has died!')
+      self.parent.die()

@@ -8,7 +8,8 @@ class SlashingWeaponFocus(Listener):
     trigger = self.get_trigger()
     rank = self.get('rank')
     round_number = self.game.get('round_number')
-    target_characters = trigger.hydrate_in(['args', 'target_character_ids'])
+    requestor = trigger.hydrate('requestor_id')
+    target_characters = requestor.get_targets()
 
     for character in target_characters:
       SlashingCriticalEffect(parent=character, state={ 'rank': rank, 'starting_round_number': round_number })

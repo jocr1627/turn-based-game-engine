@@ -8,7 +8,7 @@ def get_entities_in_range(reference_location, max_range=0, filter_fn=lambda enti
     valid_locations.add(location)
     
     if max_range < 0 or distance < max_range:
-      for neighbor in location.hydrate('neighbor_ids'):
+      for neighbor in location.get_neighbors():
         if neighbor.parent is not region and neighbor.parent.id not in region.get('neighbor_ids'):
           continue
 

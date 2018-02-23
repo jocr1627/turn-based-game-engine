@@ -6,14 +6,15 @@ class BluntWeaponFocus(Listener):
   def execute(self, diff):
     trigger = self.get_trigger()
     rank = self.get('rank')
-    round_number = self.game.get('round_number')
-    target_characters = trigger.hydrate_in(['args', 'target_character_ids'])
+    round_number = self.game.get_round_number()
+    requestor = trigger.hydrate('requestor_id')
+    target_characters = requestor.get_targets()
 
     for character in target_characters:
-      character.set('staggered', True)
-        
+      character.stagger()
+
       if rank >= 2:
-        character.set('prone', True)
+        character.knockdown()
 
   def get_default_state(self):
     return deep_merge(

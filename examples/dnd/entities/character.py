@@ -7,6 +7,7 @@ from examples.dnd.actions.deal_damage import DealDamage
 from examples.dnd.actions.defend import Defend
 from examples.dnd.actions.die import Die
 from examples.dnd.actions.enforce_rest import EnforceRest
+from examples.dnd.actions.move import Move
 from examples.dnd.actions.prepare_turn import PrepareTurn
 from examples.dnd.actions.set_target_character import SetTargetCharacter
 from examples.dnd.actions.spend_mana import SpendMana
@@ -21,7 +22,7 @@ from examples.dnd.entities.attack import Attack
 from examples.dnd.entities.equip import Equip
 from examples.dnd.entities.flee import Flee
 from examples.dnd.entities.idle import Idle
-from examples.dnd.entities.move import Move
+from examples.dnd.entities.move import Move as MoveAbility
 from examples.dnd.entities.rest import Rest
 from examples.dnd.entities.weapons.fists import Fists
 from examples.dnd.utils.roll import roll
@@ -133,7 +134,7 @@ class Character(Entity):
       Equip(),
       Flee(),
       Idle(),
-      Move(),
+      MoveAbility(),
       Rest()
     ]
 
@@ -282,7 +283,8 @@ class Character(Entity):
     knockdown.resolve()
   
   def move(self, location_id):
-    self.hydrate_by_id(location_id).add_child(self)
+    move = Move(parent=self, state={ 'location_id': location_id })
+    move.resolve()
 
   def prepare_turn(self):
     prepare_turn = PrepareTurn(parent=self)

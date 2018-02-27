@@ -1,9 +1,7 @@
-from engine.base_action import BaseAction
+from engine.action import Action
 from engine.deep_merge import deep_merge
 
-class Listener(BaseAction):
-  is_self_destructive = False
-
+class Listener(Action):
   def __init__(self, trigger_types=[], **args):
     self.trigger_types = set(deep_merge(self.get_default_trigger_types(), trigger_types))
     super().__init__(**args)
@@ -16,3 +14,6 @@ class Listener(BaseAction):
   
   def get_should_react(self, diff):
     return True
+  
+  def get_should_self_destruct(self):
+    return False

@@ -2,8 +2,6 @@ from engine.deep_merge import deep_merge
 from engine.listener import Listener
 
 class PiercingCriticalEffect(Listener):
-  is_self_destructive = True
-
   def execute(self, diff):
     trigger = self.get_trigger()
     key = trigger.get('key')
@@ -24,3 +22,6 @@ class PiercingCriticalEffect(Listener):
       and trigger.parent is self.parent
       and trigger.id is self.get('attack_id')
     )
+
+  def get_should_self_destruct(self):
+    return True
